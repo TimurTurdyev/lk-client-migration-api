@@ -11,13 +11,15 @@ ini_set('memory_limit', '256M');
 
 class TreeController extends Controller
 {
+    private int|float $timer = 60 * 5;
+
     public function show($tree_id, TreeRepository $treeRepository): \Illuminate\Http\JsonResponse
     {
         $tree = $treeRepository->find($tree_id);
 
         abort_if(is_null($tree), 404, 'Not found tree: ' . $tree_id . '!');
 
-        $timer = 10;
+        $timer = $this->timer;
 
         list($tree, $timer) = Cache::remember($tree_id, $timer, function () use ($treeRepository, $tree, $timer) {
             return [
@@ -38,7 +40,8 @@ class TreeController extends Controller
         $tree = $treeRepository->find($tree_id);
 
         abort_if(is_null($tree), 404, 'Not found tree: ' . $tree_id . '!');
-        $timer = 10;
+
+        $timer = $this->timer;
 
         $procedure_text = Cache::remember($tree_id, $timer, function () use ($treeRepository, $tree, $new_server_tree_id) {
             $sql = '';
