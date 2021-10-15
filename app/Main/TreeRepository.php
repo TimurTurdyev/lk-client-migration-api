@@ -80,10 +80,10 @@ class TreeRepository
     public function devices(string $tree_id): array
     {
         $this->sql_count += 1;
-        return DB::select("SELECT id, class, parent, name, config_id, device_sn, modem_id,
-                                    specific_loss_factor, outgoing_line_length, verification_date,
-                                    billing_date, network_id, device_time, config_time, timezone, data_source,
-                                    config_source, reg_way, status_flags, status_messages, relation, display, rates, demo_parent
+        return DB::select("SELECT `id`, `class`, `parent`, `name`, `config_id`, `device_sn`, `modem_id`,
+                                    `specific_loss_factor`, `outgoing_line_length`, `verification_date`,
+                                    `billing_date`, `network_id`, `device_time`, `config_time`, `timezone`, `data_source`,
+                                    `config_source`, `reg_way`, `status_flags`, `status_messages`, `relation`, `display`, `rates`, `demo_parent`
                                 FROM devices
                                 WHERE parent IS NOT NULL AND parent = ?", [$tree_id]);
     }
@@ -95,10 +95,10 @@ class TreeRepository
         $modems = join(',', $modems);
 
         $this->sql_count += 1;
-        return DB::select("SELECT id, name, modem_id, network_id, device_id, channel_id, serial, unit_id, offset,
-                                    multiplier, scaler, transform, full_counter, modem_value, last_value, last_value_timestamp,
-                                    isactive, reg_way, extended, deleted, moderated, billing_init_value, billing_init_timestamp,
-                                    inReckon, data_source, verification_report, profile
+        return DB::select("SELECT `id`, `name`, `modem_id`, `network_id`, `device_id`, `channel_id`, `serial`, `unit_id`, `offset`,
+                                    `multiplier`, `scaler`, `transform`, `full_counter`, `modem_value`, `last_value`, `last_value_timestamp`,
+                                    `isactive`, `reg_way`, `extended`, `deleted`, `moderated`, `billing_init_value`, `billing_init_timestamp`,
+                                    inReckon, `data_source`, `verification_report`, `profile`
                                 FROM registrators
                                 WHERE modem_id IN (?)", [$modems]);
     }
