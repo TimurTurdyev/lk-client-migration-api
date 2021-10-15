@@ -13,5 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Route::get('show/{tree_id}', [\App\Http\Controllers\TreeController::class, 'show']);
-Route::get('export/{tree_id}/insert-to/{new_server_tree_id}', [\App\Http\Controllers\TreeController::class, 'export']);
+Route::middleware(\App\Http\Middleware\MainTokenMiddleware::class)->group(function () {
+    Route::get('show/{tree_id}', [\App\Http\Controllers\TreeController::class, 'show']);
+    Route::get('export/{tree_id}/insert-to/{new_server_tree_id}', [\App\Http\Controllers\TreeController::class, 'export']);
+});
+

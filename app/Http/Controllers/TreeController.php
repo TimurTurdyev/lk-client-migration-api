@@ -7,6 +7,8 @@ use App\Main\TreeRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
+ini_set('memory_limit', '256M');
+
 class TreeController extends Controller
 {
     public function show($tree_id, TreeRepository $treeRepository): \Illuminate\Http\JsonResponse
