@@ -21,7 +21,7 @@ class TreeController extends Controller
 
         $timer = $this->timer;
 
-        list($tree, $timer) = Cache::remember($tree_id, $timer, function () use ($treeRepository, $tree, $timer) {
+        list($tree, $timer) = Cache::remember('json' . $tree_id, $timer, function () use ($treeRepository, $tree, $timer) {
             return [
                 $treeRepository->searchPathToDepth([$tree]),
                 now()->addSeconds($timer)
@@ -43,7 +43,7 @@ class TreeController extends Controller
 
         $timer = $this->timer;
 
-        $procedure_text = Cache::remember($tree_id, $timer, function () use ($treeRepository, $tree, $new_server_tree_id) {
+        $procedure_text = Cache::remember('str' . $tree_id, $timer, function () use ($treeRepository, $tree, $new_server_tree_id) {
             $sql = '';
 
             $treeRepository->searchPathCallback([$tree], function ($list, $depth) use (&$sql) {
