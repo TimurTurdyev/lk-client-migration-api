@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 
 class MainTokenMiddleware
 {
@@ -17,7 +18,10 @@ class MainTokenMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->get('token') || $request->get('token') !== config('app.main_token')) {
+        if (
+            App::environment() === 'production' &&
+            (!$request->get('token') || $request->get('token') !== config('app.main_token'))
+        ) {
             return redirect(RouteServiceProvider::HOME);
         }
 
