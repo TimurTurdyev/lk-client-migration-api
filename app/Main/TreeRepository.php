@@ -8,7 +8,7 @@ class TreeRepository
 {
     private int $sql_count = 0;
 
-    public function find($tree_id): null|object
+    public function find($tree_id)
     {
         return DB::selectOne("SELECT * FROM tree WHERE id = ?", [(int)$tree_id]);
     }
@@ -71,7 +71,7 @@ class TreeRepository
         }
     }
 
-    public function treeData(int $tree_id): null|object
+    public function treeData(int $tree_id)
     {
         $this->sql_count += 1;
         return DB::selectOne("SELECT * FROM tree_data WHERE element_id = ?", [$tree_id]);
