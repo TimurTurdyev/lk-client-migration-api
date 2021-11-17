@@ -122,6 +122,8 @@ class BaseGenerateSql
             $id = '999' . $entity->id;
             unset($entity->id);
 
+            $entity->device_id = '999' . $entity->device_id;
+
             $sql = $this->createFieldValue($entity);
 
             if (count($sql) === 0) {
