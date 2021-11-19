@@ -56,7 +56,7 @@ class BaseGenerateSql
             $sql .= "SET @last_tree_depth_{$this->depth} = @last_tree_depth_" . ($this->depth - 1) . ";" . PHP_EOL;
         }
 
-        if ($depth > 0 && $depth !== $this->depth) {
+        if ($depth !== $this->depth) {
             $sql .= "SET @path_to_tree = REPLACE( CONCAT( @path_depth_{$this->depth}, '.', @last_tree_depth_{$this->depth} ), '..', '.' );" . PHP_EOL . PHP_EOL;
         }
 
@@ -64,7 +64,7 @@ class BaseGenerateSql
         $sql .= "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
         $sql .= "INSERT INTO tree SET `path` = @path_to_tree, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
 
-        if ($depth < $this->depth) {
+        if ($depth === 0 || $depth < $this->depth) {
             $sql .= "SET @last_tree_depth_{$this->depth} = LAST_INSERT_ID();" . PHP_EOL;
         }
 
