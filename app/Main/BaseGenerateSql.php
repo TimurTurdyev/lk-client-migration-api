@@ -34,7 +34,7 @@ class BaseGenerateSql
     {
         static $depth = 0;
 
-        $id = '999' . $entity->id;
+        $id = '99' . $entity->id;
         $entity_path = $entity->path;
 
         unset($entity->id);
@@ -95,8 +95,9 @@ class BaseGenerateSql
         $sql_str = "";
 
         foreach ($entities as $entity) {
-            $id = '999' . $entity->id;
+            $id = '99' . $entity->id;
             unset($entity->id);
+            $entity->parent = '99' . $entity->parent;
 
             $sql = $this->createFieldValue($entity);
 
@@ -119,10 +120,10 @@ class BaseGenerateSql
         $sql_str = "";
 
         foreach ($entities as $entity) {
-            $id = '999' . $entity->id;
+            $id = '99' . $entity->id;
             unset($entity->id);
 
-            $entity->device_id = '999' . $entity->device_id;
+            $entity->device_id = '99' . $entity->device_id;
 
             $sql = $this->createFieldValue($entity);
 
