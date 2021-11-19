@@ -51,14 +51,21 @@ class TreeController extends Controller
             }, 0);
 
             $path = app_path('Main/Resources/TreeMigrate.sql');
+
             $procedure_text = file_get_contents($path);
             $procedure_text = str_replace('NULL;##$new_server_tree_id', $new_server_tree_id . ';', $procedure_text);
             return str_replace('##SQL##', $sql, $procedure_text);
         });
 
-        echo '<body style="padding: .5rem;margin: 0;background: black; color: #718096;"><pre>';
-        print_r($procedure_text);
-        echo '</pre></body>';
-        die();
+        if (request('dump')) {
+            echo '<body style="padding: .5rem;margin: 0;background: black; color: #718096;"><pre>';
+            print_r($procedure_text);
+            echo '</pre></body>';
+            die();
+        }
+
+        return response()->streamDownload(function () use ($procedure_text) {
+            echo $procedure_text;
+        }, 'migrate-' . $tree_id . '.sql');
     }
 }
