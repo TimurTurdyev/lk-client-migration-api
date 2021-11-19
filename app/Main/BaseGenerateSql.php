@@ -68,6 +68,8 @@ class BaseGenerateSql
             $sql .= "SET @last_tree_depth_{$this->depth} = LAST_INSERT_ID();" . PHP_EOL;
         }
 
+        $sql .= "SET @element_id_{$this->depth} = LAST_INSERT_ID();" . PHP_EOL;
+
         $sql .= "INSERT INTO migrate_data SET `entity`='tree', `old_id`='" . $id . "', `new_id`= LAST_INSERT_ID(), `date_added`=@date_added;" . PHP_EOL;
 
         $depth = $this->depth;
@@ -88,7 +90,7 @@ class BaseGenerateSql
         $sql_str = "";
         $count = self::$count++;
         $sql_str .= PHP_EOL . "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
-        $sql_str .= "REPLACE INTO tree_data SET `element_id` = @last_tree_depth_{$this->depth}, " . join(', ', $sql) . ";";
+        $sql_str .= "REPLACE INTO tree_data SET `element_id` = @element_id_{$this->depth}, " . join(', ', $sql) . ";";
         return $sql_str;
     }
 
