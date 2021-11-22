@@ -8,7 +8,7 @@ class BaseGenerateSql
     protected array $tables;
     private int $depth;
     private static int $count = 0;
-    private static int $depth_static = 0;
+    private static int $depth_static = -1;
 
     public function __construct(array $tables, int $depth)
     {
