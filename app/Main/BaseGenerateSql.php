@@ -58,10 +58,10 @@ class BaseGenerateSql
             $sql .= "INSERT INTO tree SET `path` = @path_to_tree, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
             $sql .= "SET @path_to_tree_{$this->level} = CONCAT( @path_to_tree, '.', LAST_INSERT_ID() );" . PHP_EOL . PHP_EOL;
         } else {
-            $sql .= "INSERT INTO tree SET `path` = @path_to_tree_{$this->level}, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
-            if (!isset($levels[$this->level])) {
-                $levels[$this->level] = '';
-                $prev_level = $this->level - 1;
+            $prev_level = $this->level - 1;
+            $sql .= "INSERT INTO tree SET `path` = @path_to_tree_{$prev_level}, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
+            if (!isset($levels[$prev_level])) {
+                $levels[$prev_level] = '';
                 $sql .= "SET @path_to_tree_{$this->level} = REPLACE( CONCAT( @path_to_tree_{$prev_level}, '.', LAST_INSERT_ID() ), '..', '.' );" . PHP_EOL . PHP_EOL;
             }
         }
