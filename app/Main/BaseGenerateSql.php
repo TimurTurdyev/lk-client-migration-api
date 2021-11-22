@@ -7,14 +7,15 @@ class BaseGenerateSql
     protected array $sql;
     protected array $tables;
     private int $depth;
+    private int $level = 0;
     private static int $count = 0;
-    private static int $depth_static = -1;
 
-    public function __construct(array $tables, int $depth)
+    public function __construct(array $tables, int $depth, int $level)
     {
         $this->sql = [];
         $this->tables = $tables;
-        $this->depth = $depth;
+        $this->level = $depth;
+        $this->level = $level;
     }
 
     public function apply(): string
@@ -27,8 +28,6 @@ class BaseGenerateSql
                 }
             }
         }
-
-        static::$depth_static = $this->depth;
 
         return $this->sql ? join(PHP_EOL, $this->sql) : '';
     }
@@ -49,24 +48,24 @@ class BaseGenerateSql
 
         $sql = PHP_EOL . PHP_EOL;
         $sql .= '--' . PHP_EOL;
-        $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->depth, $id, $entity_path) . PHP_EOL;
+        $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->level, $id, $entity_path) . PHP_EOL;
         $sql .= '-- ' . PHP_EOL . PHP_EOL;
 
-        if (self::$depth_static > -1 && self::$depth_static < $this->depth) {
-            $sql .= "SET @path_depth_{$this->depth} = @path_to_tree;" . PHP_EOL;
-            $sql .= "SET @last_tree_depth_{$this->depth} = @last_tree_depth_" . ($this->depth - 1) . ";" . PHP_EOL;
-            $sql .= "SET @path_to_tree = REPLACE( CONCAT( @path_depth_{$this->depth}, '.', @last_tree_depth_{$this->depth} ), '..', '.' );" . PHP_EOL . PHP_EOL;
+        if ($this->level < $this->depth) {
+            $sql .= "SET @path_depth_{$this->level} = @path_to_tree;" . PHP_EOL;
+            $sql .= "SET @last_tree_depth_{$this->level} = @last_tree_depth_" . ($this->level - 1) . ";" . PHP_EOL;
+            $sql .= "SET @path_to_tree = REPLACE( CONCAT( @path_depth_{$this->level}, '.', @last_tree_depth_{$this->level} ), '..', '.' );" . PHP_EOL . PHP_EOL;
         }
 
         $count = self::$count++;
         $sql .= "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
         $sql .= "INSERT INTO tree SET `path` = @path_to_tree, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
 
-        if (self::$depth_static < $this->depth) {
-            $sql .= "SET @last_tree_depth_{$this->depth} = LAST_INSERT_ID();" . PHP_EOL;
+        if ($this->level < $this->depth) {
+            $sql .= "SET @last_tree_depth_{$this->level} = LAST_INSERT_ID();" . PHP_EOL;
         }
 
-        $sql .= "SET @element_id_{$this->depth} = LAST_INSERT_ID();" . PHP_EOL;
+        $sql .= "SET @element_id_{$this->level} = LAST_INSERT_ID();" . PHP_EOL;
 
         $sql .= "INSERT INTO migrate_data SET `entity`='tree', `old_id`='" . $id . "', `new_id`= LAST_INSERT_ID(), `date_added`=@date_added;" . PHP_EOL;
         return $sql;
@@ -86,7 +85,7 @@ class BaseGenerateSql
         $sql_str = "";
         $count = self::$count++;
         $sql_str .= PHP_EOL . "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
-        $sql_str .= "REPLACE INTO tree_data SET `element_id` = @element_id_{$this->depth}, " . join(', ', $sql) . ";";
+        $sql_str .= "REPLACE INTO tree_data SET `element_id` = @element_id_{$this->level}, " . join(', ', $sql) . ";";
         return $sql_str;
     }
 
@@ -156,10 +155,5 @@ class BaseGenerateSql
         }
 
         return $sql;
-    }
-
-    public function getDepth(): int
-    {
-        return self::$depth;
     }
 }

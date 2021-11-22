@@ -46,8 +46,10 @@ class TreeRepository
         return $list_search;
     }
 
-    public function searchPathCallback($tree, $callback, $depth): void
+    public function searchPathCallback($tree, $callback, $depth = 0): void
     {
+        static $level = 0;
+
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);
             $modems = [];
@@ -65,10 +67,12 @@ class TreeRepository
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
                 'registrators' => $this->registrators(array_keys($modems)),
-            ], $depth);
+            ], $depth, $level);
 
             $this->searchPathCallback($find_tree, $callback, $depth + 1);
         }
+
+        $level++;
     }
 
     public function treeData(int $tree_id)
