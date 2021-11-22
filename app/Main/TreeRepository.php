@@ -58,17 +58,17 @@ class TreeRepository
                 }
             }
 
+            $path = str_replace('..', '.', sprintf('%s.%s', $list->path, $list->id));
+
+            $find_tree = $this->findToPath($path);
+            $this->searchPathCallback($find_tree, $callback, $level + 1);
+
             $callback([
                 'tree' => $list,
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
                 'registrators' => $this->registrators(array_keys($modems)),
             ], $level);
-
-            $path = str_replace('..', '.', sprintf('%s.%s', $list->path, $list->id));
-
-            $find_tree = $this->findToPath($path);
-            $this->searchPathCallback($find_tree, $callback, $level + 1);
         }
     }
 
