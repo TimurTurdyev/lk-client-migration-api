@@ -14,7 +14,7 @@ class BaseGenerateSql
     {
         $this->sql = [];
         $this->tables = $tables;
-        $this->level = $depth;
+        $this->depth = $depth;
         $this->level = $level;
     }
 
@@ -51,7 +51,7 @@ class BaseGenerateSql
         $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->level, $id, $entity_path) . PHP_EOL;
         $sql .= '-- ' . PHP_EOL . PHP_EOL;
 
-        if ($this->level < $this->depth) {
+        if ($this->level > 0 && $this->level < $this->depth) {
             $sql .= "SET @path_depth_{$this->level} = @path_to_tree;" . PHP_EOL;
             $sql .= "SET @last_tree_depth_{$this->level} = @last_tree_depth_" . ($this->level - 1) . ";" . PHP_EOL;
             $sql .= "SET @path_to_tree = REPLACE( CONCAT( @path_depth_{$this->level}, '.', @last_tree_depth_{$this->level} ), '..', '.' );" . PHP_EOL . PHP_EOL;
