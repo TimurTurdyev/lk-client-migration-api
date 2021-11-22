@@ -7,7 +7,7 @@ class BaseGenerateSql
     protected array $sql;
     protected array $tables;
     private int $depth;
-    private int $level = 0;
+    private int $level;
     private static int $count = 0;
 
     public function __construct(array $tables, int $depth, int $level)
