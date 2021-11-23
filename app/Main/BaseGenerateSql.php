@@ -6,14 +6,14 @@ class BaseGenerateSql
 {
     protected array $sql;
     protected array $tables;
-    private int $level;
+    private int $parent;
     private static int $count = 0;
 
-    public function __construct(array $tables, int $level)
+    public function __construct(array $tables, int $parent)
     {
         $this->sql = [];
         $this->tables = $tables;
-        $this->level = $level;
+        $this->parent = $parent;
     }
 
     public function apply(): string
@@ -44,25 +44,25 @@ class BaseGenerateSql
             return '';
         }
 
-        static $levels = [];
+        static $parents = [];
 
         $sql = PHP_EOL . PHP_EOL;
         $sql .= '--' . PHP_EOL;
-        $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->level, $id, $entity_path) . PHP_EOL;
+        $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->parent, $id, $entity_path) . PHP_EOL;
         $sql .= '-- ' . PHP_EOL . PHP_EOL;
 
         $count = self::$count++;
         $sql .= "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
 
-        if ($this->level === 0) {
+        if ($this->parent == '') {
             $sql .= "INSERT INTO tree SET `path` = @path_to_tree, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
-            $sql .= "SET @path_to_tree_{$this->level} = CONCAT( @path_to_tree, '.', LAST_INSERT_ID() );" . PHP_EOL . PHP_EOL;
+            $sql .= "SET @path_to_tree_{$id} = CONCAT( @path_to_tree, '.', LAST_INSERT_ID() );" . PHP_EOL . PHP_EOL;
         } else {
-            $prev_level = $this->level - 1;
-            $sql .= "INSERT INTO tree SET `path` = @path_to_tree_{$prev_level}, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
-            if (!isset($levels[$prev_level])) {
-                $levels[$prev_level] = '';
-                $sql .= "SET @path_to_tree_{$this->level} = REPLACE( CONCAT( @path_to_tree_{$prev_level}, '.', LAST_INSERT_ID() ), '..', '.' );" . PHP_EOL . PHP_EOL;
+            $parent = '99' . $this->parent;
+            $sql .= "INSERT INTO tree SET `path` = @path_to_tree_{$parent}, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
+            if (!isset($parents[$parent])) {
+                $parents[$parent] = '';
+                $sql .= "SET @path_to_tree_{$id} = REPLACE( CONCAT( @path_to_tree_{$parent}, '.', LAST_INSERT_ID() ), '..', '.' );" . PHP_EOL . PHP_EOL;
             }
         }
 

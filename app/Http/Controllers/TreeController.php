@@ -46,9 +46,9 @@ class TreeController extends Controller
         $procedure_text = Cache::remember('str' . $tree_id, $timer, function () use ($treeRepository, $tree, $new_server_tree_id) {
             $sql = '';
 
-            $treeRepository->searchPathCallback([$tree], function ($list, $level) use (&$sql) {
-                $sql .= (new BaseGenerateSql($list, $level))->apply();
-            });
+            $treeRepository->searchPathCallback([$tree], function ($list, $parent) use (&$sql) {
+                $sql .= (new BaseGenerateSql($list, $parent))->apply();
+            }, '');
 
             $path = app_path('Main/Resources/TreeMigrate.sql');
 
