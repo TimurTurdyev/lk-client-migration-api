@@ -67,7 +67,7 @@ class TreeRepository
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
                 'registrators' => $this->registrators(array_keys($modems)),
-            ], $list->id);
+            ], $parent);
 
             $this->searchPathCallback($find_tree, $callback, $list->id);
         }
