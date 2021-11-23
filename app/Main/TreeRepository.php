@@ -57,19 +57,19 @@ class TreeRepository
                     $modems[$device->modem_id] = '';
                 }
             }
-
-            $path = str_replace('..', '.', sprintf('%s.%s', $list->path, $list->id));
+            $id = $list->id;
+            $path = str_replace('..', '.', sprintf('%s.%s', $list->path, $id));
 
             $find_tree = $this->findToPath($path);
 
             $callback([
                 'tree' => $list,
-                'tree_data' => $this->treeData($list->id),
+                'tree_data' => $this->treeData($id),
                 'devices' => $devices,
                 'registrators' => $this->registrators(array_keys($modems)),
             ], $parent);
 
-            $this->searchPathCallback($find_tree, $callback, $list->id);
+            $this->searchPathCallback($find_tree, $callback, $id);
         }
     }
 
