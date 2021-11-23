@@ -48,7 +48,7 @@ class TreeController extends Controller
 
             $treeRepository->searchPathCallback([$tree], function ($list, $parent) use (&$sql) {
                 $sql .= (new BaseGenerateSql($list, $parent))->apply();
-            }, '');
+            });
 
             $path = app_path('Main/Resources/TreeMigrate.sql');
 

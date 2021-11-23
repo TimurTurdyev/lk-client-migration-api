@@ -46,7 +46,7 @@ class TreeRepository
         return $list_search;
     }
 
-    public function searchPathCallback($tree, $callback, $parent): void
+    public function searchPathCallback($tree, $callback, $parent = 0): void
     {
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);

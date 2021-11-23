@@ -48,13 +48,13 @@ class BaseGenerateSql
 
         $sql = PHP_EOL . PHP_EOL;
         $sql .= '--' . PHP_EOL;
-        $sql .= sprintf('-- DEPTH: %s | ID: %s PATH: %s', $this->parent, $id, $entity_path) . PHP_EOL;
+        $sql .= sprintf('-- PARENT: %s | ID: %s PATH: %s', $this->parent, $id, $entity_path) . PHP_EOL;
         $sql .= '-- ' . PHP_EOL . PHP_EOL;
 
         $count = self::$count++;
         $sql .= "SET @track_no = {$count};##$count" . PHP_EOL . PHP_EOL;
 
-        if ($this->parent == '') {
+        if ($this->parent === 0) {
             $sql .= "INSERT INTO tree SET `path` = @path_to_tree, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
             $sql .= "SET @path_to_tree_{$id} = CONCAT( @path_to_tree, '.', LAST_INSERT_ID() );" . PHP_EOL . PHP_EOL;
         } else {
