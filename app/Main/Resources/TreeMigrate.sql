@@ -46,7 +46,7 @@ BEGIN
 
         SET @track_no = @track_no + 1;
 
-        UPDATE devices AS t1 INNER JOIN ( SELECT CONCAT(' ', new_id) AS parent, CONCAT(old_id) as old_id
+        UPDATE devices AS t1 INNER JOIN ( SELECT CONCAT('', new_id) AS parent, CONCAT(old_id) as old_id
                                           FROM migrate_data
                                           WHERE entity = 'tree' AND date_added = @date_added ) AS t2
         SET t1.parent = t2.parent
