@@ -44,8 +44,6 @@ class BaseGenerateSql
             return '';
         }
 
-        static $parents = [];
-
         $sql = PHP_EOL . PHP_EOL;
         $sql .= '--' . PHP_EOL;
         $sql .= sprintf('-- PARENT: %s | ID: %s PATH: %s', $this->parent, $id, $entity_path) . PHP_EOL;
@@ -60,10 +58,7 @@ class BaseGenerateSql
         } else {
             $parent = '99' . $this->parent;
             $sql .= "INSERT INTO tree SET `path` = @path_to_tree_{$parent}, " . join(', ', $sql_create) . ";" . PHP_EOL . PHP_EOL;
-            if (!isset($parents[$parent])) {
-                $parents[$parent] = '';
-                $sql .= "SET @path_to_tree_{$id} = REPLACE( CONCAT( @path_to_tree_{$parent}, '.', LAST_INSERT_ID() ), '..', '.' );" . PHP_EOL . PHP_EOL;
-            }
+            $sql .= "SET @path_to_tree_{$id} = REPLACE( CONCAT( @path_to_tree_{$parent}, '.', LAST_INSERT_ID() ), '..', '.' );" . PHP_EOL . PHP_EOL;
         }
 
         $sql .= "SET @element_id = LAST_INSERT_ID();" . PHP_EOL;
