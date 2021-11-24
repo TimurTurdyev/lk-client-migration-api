@@ -70,17 +70,12 @@ BEGIN
                             ON t1.id = t2.new_id AND t1.modem_id IS NOT NULL
         ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = t1.id, modems_devices_rel.modem_id = t1.modem_id;
 
-        INSERT INTO devices_registrators_rel
-        SELECT device_id, id
-        FROM registrators
-        WHERE device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
-
         SET @track_no = @track_no + 1;
 
         INSERT INTO devices_registrators_rel
-        SELECT device_id, id
-        FROM registrators
-        WHERE device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
+        SELECT r.device_id, r.id
+        FROM registrators r
+        WHERE r.device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
 
 
         SET @track_no = @track_no + 1;
