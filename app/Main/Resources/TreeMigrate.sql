@@ -32,7 +32,7 @@ BEGIN
     SET @date_added = NOW();
 
     IF @tree_parent_id IS NOT NULL THEN
-        SET @path_to_tree = ( SELECT CONCAT(`path`, '.', `id`) AS path_to_tree FROM tree WHERE `id` = @tree_parent_id );
+        SET @path_to_tree = (SELECT CONCAT(`path`, '.', `id`) AS path_to_tree FROM tree WHERE `id` = @tree_parent_id);
     END IF;
 
     IF @path_to_tree IS NULL THEN
@@ -46,10 +46,9 @@ BEGIN
 
         SET @track_no = @track_no + 1;
 
-        UPDATE devices AS t1 INNER JOIN ( SELECT CONCAT('', new_id) AS parent, CONCAT(old_id) AS old_id
+        UPDATE devices AS t1 INNER JOIN ( SELECT CONCAT('', new_id) AS parent, CONCAT(old_id) as old_id
                                           FROM migrate_data
-                                          WHERE entity = 'tree'
-                                            AND date_added = @date_added ) AS t2
+                                          WHERE entity = 'tree' AND date_added = @date_added ) AS t2
         SET t1.parent = t2.parent
         WHERE t1.parent = t2.old_id;
 
@@ -64,18 +63,20 @@ BEGIN
         SET @track_no = @track_no + 1;
 
         INSERT INTO modems_devices_rel
-        SELECT t1.modem_id, t1.id
-        FROM devices t1
-                 INNER JOIN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added ) t2
-                            ON t1.id = t2.new_id AND t1.modem_id IS NOT NULL
-        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = t1.id, modems_devices_rel.modem_id = t1.modem_id;
+        SELECT devices.modem_id, devices.id
+        FROM devices
+                 JOIN migrate_data ON migrate_data.entity = 'devices' AND devices.id = migrate_data.new_id AND
+                                      migrate_data.date_added = @date_added
+        WHERE devices.modem_id IS NOT NULL
+        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = devices.id,
+                                modems_devices_rel.modem_id  = devices.modem_id;
 
         SET @track_no = @track_no + 1;
 
         INSERT INTO devices_registrators_rel
-        SELECT r.device_id, r.id
-        FROM registrators r
-        WHERE r.device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
+        SELECT device_id, id
+        FROM registrators
+        WHERE device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
 
 
         SET @track_no = @track_no + 1;
