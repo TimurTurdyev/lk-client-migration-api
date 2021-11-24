@@ -64,11 +64,16 @@ BEGIN
         SET @track_no = @track_no + 1;
 
         INSERT INTO modems_devices_rel
-        SELECT modem_id, id
-        FROM devices
-        WHERE id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added )
-          AND modem_id IS NOT NULL
-        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = id, modems_devices_rel.modem_id = modem_id;
+        SELECT t1.modem_id, t1.id
+        FROM devices t1
+                 INNER JOIN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added ) t2
+                            ON t1.id = t2.new_id AND t1.modem_id IS NOT NULL
+        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = t1.id, modems_devices_rel.modem_id = t1.modem_id;
+
+        INSERT INTO devices_registrators_rel
+        SELECT device_id, id
+        FROM registrators
+        WHERE device_id IN ( SELECT new_id FROM migrate_data WHERE entity = 'devices' AND date_added = @date_added );
 
         SET @track_no = @track_no + 1;
 
