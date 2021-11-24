@@ -75,17 +75,17 @@ BEGIN
         SET @track_no = @track_no + 1;
 
         INSERT INTO modems_devices_rel
-        SELECT IF(devices.modem_id IS NOT NULL, devices.modem_id, ( SELECT modem_id
-                                                                    FROM devices
-                                                                    WHERE parent = devices.parent
-                                                                      AND relation = 'primary'
-                                                                    LIMIT 1 )) AS modem_id,
-               devices.id
-        FROM devices
-                 JOIN migrate_data ON migrate_data.entity = 'devices' AND devices.id = migrate_data.new_id AND
-                                      migrate_data.date_added = @date_added
-        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = devices.id,
-                                modems_devices_rel.modem_id  = devices.modem_id;
+        SELECT d.modem_id, d.id
+        FROM ( SELECT IF(t1.modem_id IS NOT NULL, t1.modem_id, ( SELECT modem_id
+                                                                 FROM devices
+                                                                 WHERE parent = t1.parent AND relation = 'primary'
+                                                                 LIMIT 1 )) AS modem_id,
+                      t1.id
+               FROM devices t1
+                        JOIN migrate_data md
+                             ON md.entity = 'devices' AND t1.id = md.new_id AND md.date_added = @date_added ) d
+        WHERE modem_id IS NOT NULL
+        ON DUPLICATE KEY UPDATE modems_devices_rel.device_id = d.id, modems_devices_rel.modem_id = d.modem_id;
 
         SET @track_no = @track_no + 1;
 
