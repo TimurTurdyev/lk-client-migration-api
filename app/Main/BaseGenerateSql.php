@@ -16,7 +16,7 @@ class BaseGenerateSql
         $this->depth = $depth;
     }
 
-    public function apply(): string
+    public function apply()
     {
         foreach ($this->tables as $table => $value) {
             if (method_exists($this, $table)) {
@@ -30,7 +30,7 @@ class BaseGenerateSql
         return $this->sql ? join(PHP_EOL, $this->sql) : '';
     }
 
-    protected function tree($entity): string
+    protected function tree($entity)
     {
         static $depth = 0;
 
@@ -70,7 +70,7 @@ class BaseGenerateSql
         return $sql;
     }
 
-    protected function tree_data($entity): string
+    protected function tree_data($entity)
     {
         if (!$entity) return '';
         unset($entity->element_id);
@@ -88,7 +88,7 @@ class BaseGenerateSql
         return $sql_str;
     }
 
-    protected function devices($entities): string
+    protected function devices($entities)
     {
         if (!$entities) return '';
 
@@ -112,7 +112,7 @@ class BaseGenerateSql
         return $sql_str;
     }
 
-    protected function registrators($entities): string
+    protected function registrators($entities)
     {
         if (!$entities) return '';
 

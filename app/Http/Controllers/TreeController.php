@@ -56,7 +56,6 @@ class TreeController extends Controller
             return str_replace('##SQL##', $sql, $procedure_text);
         });
 
-
         echo '<body style="padding: .5rem;margin: 0;background: black; color: #718096;"><pre>';
         print_r($procedure_text);
         echo '</pre></body>';

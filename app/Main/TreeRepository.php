@@ -8,27 +8,27 @@ class TreeRepository
 {
     private int $sql_count = 0;
 
-    public function find($tree_id): null|object
+    public function find($tree_id)
     {
         return DB::selectOne("SELECT * FROM tree WHERE id = ?", [(int)$tree_id]);
     }
 
-    public function findToPath($path): array
+    public function findToPath($path)
     {
         return DB::select("SELECT tree.* FROM tree WHERE path = ?", [(string)$path]);
     }
 
-    public function searchPathToDepth($tree): array
+    public function searchPathToDepth($tree)
     {
         $list_search = [];
 
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);
-            $modems = [];
+            $device_id = [];
 
             foreach ($devices as $device) {
-                if ($device->modem_id) {
-                    $modems[$device->modem_id] = '';
+                if ($device->id) {
+                    $device_id[$device->id] = '';
                 }
             }
 
@@ -38,7 +38,7 @@ class TreeRepository
                 'tree' => $list,
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
-                'registrators' => $this->registrators(array_keys($modems)),
+                'registrators' => $this->registrators(array_keys($device_id)),
                 'data' => $this->searchPathToDepth($find_tree)
             ];
         }
@@ -50,11 +50,11 @@ class TreeRepository
     {
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);
-            $modems = [];
+            $device_id = [];
 
             foreach ($devices as $device) {
-                if ($device->modem_id) {
-                    $modems[$device->modem_id] = '';
+                if ($device->id) {
+                    $device_id[$device->id] = '';
                 }
             }
 
@@ -64,20 +64,20 @@ class TreeRepository
                 'tree' => $list,
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
-                'registrators' => $this->registrators(array_keys($modems)),
+                'registrators' => $this->registrators(array_keys($device_id)),
             ], $depth);
 
             $this->searchPathCallback($find_tree, $callback, $depth + 1);
         }
     }
 
-    public function treeData(int $tree_id): null|object
+    public function treeData(int $tree_id)
     {
         $this->sql_count += 1;
         return DB::selectOne("SELECT * FROM tree_data WHERE element_id = ?", [$tree_id]);
     }
 
-    public function devices(string $tree_id): array
+    public function devices(string $tree_id)
     {
         $this->sql_count += 1;
         return DB::select("SELECT `id`, `class`, `parent`, `name`, `config_id`, `device_sn`, `modem_id`,
@@ -88,11 +88,11 @@ class TreeRepository
                                 WHERE parent IS NOT NULL AND parent = ?", [$tree_id]);
     }
 
-    public function registrators(array $modems): array
+    public function registrators(array $device_id)
     {
-        if (!$modems) return [];
+        if (!$device_id) return [];
 
-        $modems = join(',', $modems);
+        $device_id = join(',', $device_id);
 
         $this->sql_count += 1;
         return DB::select("SELECT `id`, `name`, `modem_id`, `network_id`, `device_id`, `channel_id`, `serial`, `unit_id`, `offset`,
@@ -100,7 +100,9 @@ class TreeRepository
                                     `isactive`, `reg_way`, `extended`, `deleted`, `moderated`, `billing_init_value`, `billing_init_timestamp`,
                                     inReckon, `data_source`, `verification_report`, `profile`
                                 FROM registrators
-                                WHERE modem_id IN (?)", [$modems]);
+                                JOIN devices_registators_rel ON registrators.id = devices_registators_rel.registrator_id
+                                WHERE devices_registators_rel.device_id IN (?)
+                                GROUP BY registrators.id", [$device_id]);
     }
 
     public function getSqlCount(): int
