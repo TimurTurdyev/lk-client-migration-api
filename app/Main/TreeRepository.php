@@ -95,14 +95,14 @@ class TreeRepository
         $device_id = join(',', $device_id);
 
         $this->sql_count += 1;
-        return DB::select("SELECT `id`, `name`, `modem_id`, `network_id`, `device_id`, `channel_id`, `serial`, `unit_id`, `offset`,
-                                    `multiplier`, `scaler`, `transform`, `full_counter`, `modem_value`, `last_value`, `last_value_timestamp`,
-                                    `isactive`, `reg_way`, `extended`, `deleted`, `moderated`, `billing_init_value`, `billing_init_timestamp`,
-                                    inReckon, `data_source`, `verification_report`, `profile`
-                                FROM registrators
-                                JOIN devices_registrators_rel ON registrators.id = devices_registrators_rel.registrator_id
-                                WHERE devices_registrators_rel.device_id IN (?)
-                                GROUP BY registrators.id", [$device_id]);
+        return DB::select("SELECT r.`id`, r.`name`, r.`modem_id`, r.`network_id`, r.`device_id`, r.`channel_id`, r.`serial`, r.`unit_id`, r.`offset`,
+                                    `multiplier`, r.`scaler`, r.`transform`, r.`full_counter`, r.`modem_value`, r.`last_value`, r.`last_value_timestamp`,
+                                    `isactive`, r.`reg_way`, r.`extended`, r.`deleted`, r.`moderated`, r.`billing_init_value`, r.`billing_init_timestamp`,
+                                    inReckon, `data_source`, r.`verification_report`, r.`profile`
+                                FROM registrators r
+                                JOIN devices_registrators_rel drr ON registrators.id = drr.registrator_id
+                                WHERE drr.device_id IN (?)
+                                GROUP BY r.id", [$device_id]);
     }
 
     public function getSqlCount(): int
