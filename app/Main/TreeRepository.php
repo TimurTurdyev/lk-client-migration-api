@@ -100,7 +100,7 @@ class TreeRepository
                                     `isactive`, r.`reg_way`, r.`extended`, r.`deleted`, r.`moderated`, r.`billing_init_value`, r.`billing_init_timestamp`,
                                     inReckon, `data_source`, r.`verification_report`, r.`profile`
                                 FROM registrators r
-                                JOIN devices_registrators_rel drr ON registrators.id = drr.registrator_id
+                                JOIN devices_registrators_rel drr ON r.id = drr.registrator_id
                                 WHERE drr.device_id IN (?)
                                 GROUP BY r.id", [$device_id]);
     }
