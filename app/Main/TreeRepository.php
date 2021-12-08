@@ -46,7 +46,7 @@ class TreeRepository
         return $list_search;
     }
 
-    public function searchPathCallback($tree, $callback, $depth): void
+    public function searchPathCallback($tree, $callback, $depth)
     {
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);
@@ -105,7 +105,7 @@ class TreeRepository
                                 GROUP BY r.id", [$device_id]);
     }
 
-    public function getSqlCount(): int
+    public function getSqlCount()
     {
         return $this->sql_count;
     }
