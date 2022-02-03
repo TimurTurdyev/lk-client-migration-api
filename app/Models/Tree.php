@@ -2,20 +2,32 @@
 
 namespace App\Models;
 
-use Orchid\Platform\Models\User as Authenticatable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\DB;
+use Orchid\Filters\Filterable;
+use Orchid\Screen\AsSource;
 
-class User extends Authenticatable
+class Tree extends Model
 {
+    use HasFactory, Filterable, AsSource;
+
+    protected $connection = 'mysql_lk';
+
+    protected $table = 'tree';
+    public $timestamps = false;
+    protected $guarded = [];
+    protected $primaryKey = 'id';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'permissions',
+
     ];
 
     /**
@@ -24,9 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password',
-        'remember_token',
-        'permissions',
+
     ];
 
     /**
@@ -35,8 +45,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'permissions'          => 'array',
-        'email_verified_at'    => 'datetime',
+
     ];
 
     /**
@@ -47,8 +56,7 @@ class User extends Authenticatable
     protected $allowedFilters = [
         'id',
         'name',
-        'email',
-        'permissions',
+        'time_zone',
     ];
 
     /**
@@ -59,8 +67,11 @@ class User extends Authenticatable
     protected $allowedSorts = [
         'id',
         'name',
-        'email',
-        'updated_at',
-        'created_at',
+        'time_zone',
     ];
+
+    public function treeChild()
+    {
+        return $this->hasOne($this, 'id')->orWhere('path', 'like', DB::raw("CONCAT(tree.path, '.', tree.id, '.%')"));
+    }
 }

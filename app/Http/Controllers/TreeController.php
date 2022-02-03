@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Main\BaseGenerateSql;
-use App\Main\TreeRepository;
-use Illuminate\Http\Request;
+use App\Main\Export\BaseGenerateSql;
+use App\Main\Export\TreeRepository;
 use Illuminate\Support\Facades\Cache;
 
-ini_set('memory_limit', '256M');
+ini_set('memory_limit', '1024M');
 
 class TreeController extends Controller
 {

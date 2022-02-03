@@ -1,11 +1,16 @@
 <?php
 
-namespace App\Main;
+namespace App\Main\Export;
 
 use Illuminate\Support\Facades\DB;
 
 class TreeRepository
 {
+    public function __construct()
+    {
+        DB::setDefaultConnection('mysql_lk');
+    }
+
     private int $sql_count = 0;
 
     public function find($tree_id)
@@ -24,21 +29,21 @@ class TreeRepository
 
         foreach ($tree as $list) {
             $devices = $this->devices($list->id);
-            $device_id = [];
+            /*$device_id = [];
 
             foreach ($devices as $device) {
                 if ($device->id) {
                     $device_id[$device->id] = '';
                 }
-            }
+            }*/
 
             $find_tree = $this->findToPath(str_replace('..', '.', sprintf('%s.%s', $list->path, $list->id)));
 
-            $list_search[$list->id] = [
+            $list_search[] = [
                 'tree' => $list,
                 'tree_data' => $this->treeData($list->id),
                 'devices' => $devices,
-                'registrators' => $this->registrators(array_keys($device_id)),
+                //'registrators' => $this->registrators(array_keys($device_id)),
                 'data' => $this->searchPathToDepth($find_tree)
             ];
         }
@@ -83,10 +88,7 @@ class TreeRepository
     public function devices(string $tree_id)
     {
         $this->sql_count += 1;
-        return DB::select("SELECT `id`, `class`, `parent`, `name`, `config_id`, `device_sn`, `modem_id`,
-                                    `specific_loss_factor`, `outgoing_line_length`, `verification_date`,
-                                    `billing_date`, `network_id`, `device_time`, `config_time`, `timezone`, `data_source`,
-                                    `config_source`, `reg_way`, `status_flags`, `status_messages`, `relation`, `display`, `rates`, `demo_parent`
+        return DB::select("SELECT *
                                 FROM devices
                                 WHERE parent IS NOT NULL AND parent = ?", [$tree_id]);
     }
@@ -98,10 +100,7 @@ class TreeRepository
         $device_id = join(',', $device_id);
 
         $this->sql_count += 1;
-        return DB::select("SELECT r.`id`, r.`name`, r.`modem_id`, r.`network_id`, r.`device_id`, r.`channel_id`, r.`serial`, r.`unit_id`, r.`offset`,
-                                    `multiplier`, r.`scaler`, r.`transform`, r.`full_counter`, r.`modem_value`, r.`last_value`, r.`last_value_timestamp`,
-                                    `isactive`, r.`reg_way`, r.`extended`, r.`deleted`, r.`moderated`, r.`billing_init_value`, r.`billing_init_timestamp`,
-                                    inReckon, `data_source`, r.`verification_report`, r.`profile`
+        return DB::select("SELECT r.*
                                 FROM registrators r
                                 JOIN devices_registrators_rel drr ON r.id = drr.registrator_id
                                 WHERE drr.device_id IN (?)
