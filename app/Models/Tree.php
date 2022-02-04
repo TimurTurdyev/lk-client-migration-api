@@ -72,6 +72,6 @@ class Tree extends Model
 
     public function treeChild()
     {
-        return $this->hasOne($this, 'id')->orWhere('path', 'like', DB::raw("CONCAT(tree.path, '.', tree.id, '.%')"));
+        return $this->hasOne($this, 'id')->orWhere('path', 'like', DB::raw("REPLACE(CONCAT(tree.path, '.', tree.id, '.%'), '..', '.')"));
     }
 }
