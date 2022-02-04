@@ -104,7 +104,6 @@ class ExportFormScreen extends Screen
      */
     public function export($tree_id, TreeRepository $treeRepository): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $tree_id = 1;
         $file_name = sprintf('export_%s', $tree_id);
 
         $tree = $treeRepository->find($tree_id);
