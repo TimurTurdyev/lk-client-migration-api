@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Orchid;
 
+use App\Models\LkImportFile;
+use App\Models\Tree;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
 use Orchid\Platform\OrchidServiceProvider;
@@ -28,6 +30,22 @@ class PlatformProvider extends OrchidServiceProvider
     public function registerMainMenu(): array
     {
         return [
+            Menu::make('Экспорт')
+                ->icon('monitor')
+                ->route('platform.export')
+                ->title('Navigation')
+                ->badge(function () {
+                    return Tree::count();
+                }),
+
+            Menu::make('Импорт')
+                ->icon('monitor')
+                ->route('platform.import')
+                ->badge(function () {
+                    return LkImportFile::count();
+                }),
+
+            /*
             Menu::make('Example screen')
                 ->icon('monitor')
                 ->route('platform.example')
@@ -36,15 +54,7 @@ class PlatformProvider extends OrchidServiceProvider
                     return 6;
                 }),
 
-            Menu::make('Экспорт')
-                ->icon('monitor')
-                ->route('platform.export')
-                ->title('Navigation')
-                ->badge(function () {
-                    return 6;
-                }),
-
-            /*Menu::make('Dropdown menu')
+            Menu::make('Dropdown menu')
                 ->icon('code')
                 ->list([
                     Menu::make('Sub element item 1')->icon('bag'),

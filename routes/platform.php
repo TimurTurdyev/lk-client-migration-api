@@ -29,13 +29,30 @@ use Tabuna\Breadcrumbs\Trail;
 |
 */
 
-// Example...
-Route::screen('export', \App\Orchid\Screens\Export\ExportFormScreen::class)
+// Export...
+Route::screen('export', \App\Orchid\Screens\Export\ExportListScreen::class)
     ->name('platform.export')
     ->breadcrumbs(function (Trail $trail) {
         return $trail
             ->parent('platform.index')
             ->push('Экспорт данных');
+    });
+
+// Import
+Route::screen('import/create', \App\Orchid\Screens\Import\ImportFormScreen::class)
+    ->name('platform.import.create')
+    ->breadcrumbs(function (Trail $trail) {
+        return $trail
+            ->parent('platform.import')
+            ->push('Форма импорта', route('platform.import.create'));
+    });
+
+Route::screen('import', \App\Orchid\Screens\Import\ImportListScreen::class)
+    ->name('platform.import')
+    ->breadcrumbs(function (Trail $trail) {
+        return $trail
+            ->parent('platform.index')
+            ->push('Импорт данных', route('platform.import'));
     });
 
 // Main

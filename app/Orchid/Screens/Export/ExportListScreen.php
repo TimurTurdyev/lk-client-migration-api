@@ -11,7 +11,7 @@ use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
 
-class ExportFormScreen extends Screen
+class ExportListScreen extends Screen
 {
     /**
      * Display header name.
@@ -121,8 +121,9 @@ class ExportFormScreen extends Screen
 
         $result = Cache::remember($file_name, $timer, function () use ($treeRepository, $tree, $timer) {
             return json_encode([
-                'query' => $treeRepository->getSqlCount(),
-                'cache' => now()->addSeconds($timer),
+                'app_url' => config('app.url'),
+                'sql_count' => $treeRepository->getSqlCount(),
+                'caching_time_up_to' => now()->addSeconds($timer),
                 'data' => array_values($treeRepository->searchPathToDepth([$tree])),
             ], JSON_PRETTY_PRINT);
         });

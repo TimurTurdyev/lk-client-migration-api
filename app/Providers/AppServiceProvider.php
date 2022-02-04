@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\LkImportFile;
+use App\Observers\LkImportFileObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        LkImportFile::observe(LkImportFileObserver::class);
     }
 }

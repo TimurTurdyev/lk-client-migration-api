@@ -15,9 +15,12 @@ class CreateLkMigrationsTable extends Migration
     {
         Schema::create('lk_migrations', function (Blueprint $table) {
             $table->id();
-            $table->string('tables', 64)->index();
+            $table->foreignId('lk_import_file_id')
+                ->nullable()
+                ->constrained('lk_import_files')
+                ->onDelete('SET NULL');
+            $table->morphs('importable');
             $table->integer('old_id');
-            $table->integer('new_id');
             $table->timestamp('created_at');
         });
     }

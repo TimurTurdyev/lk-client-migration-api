@@ -9,7 +9,7 @@ class LkMigrations extends Model
 {
     use HasFactory;
 
-    protected $table = 'migrate_data';
+    protected $table = 'lk_migrations';
     public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = ['table', 'old_id', 'new_id', 'created_at'];
