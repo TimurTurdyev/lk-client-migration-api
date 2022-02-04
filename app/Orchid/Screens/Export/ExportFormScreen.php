@@ -30,6 +30,7 @@ class ExportFormScreen extends Screen
         return [
             'table' => Tree::filters()
                 ->withCount('treeChild')
+                ->defaultSort('path', 'asc')
                 ->paginate(),
         ];
     }
@@ -58,6 +59,8 @@ class ExportFormScreen extends Screen
                 TD::make('id', 'ID')
                     ->width('100')
                     ->filter(Input::make())
+                    ->sort()
+                    ->cantHide()
                     ->render(function (Tree $tree) {
                         return $tree->id;
                     }),
@@ -65,11 +68,13 @@ class ExportFormScreen extends Screen
                 TD::make('name', 'Name')
                     ->filter(Input::make())
                     ->width('300')
+                    ->sort()
                     ->render(function (Tree $tree) {
                         return $tree->name;
                     }),
 
                 TD::make('type', 'Type')
+                    ->sort()
                     ->render(function (Tree $tree) {
                         return $tree->type;
                     }),
@@ -77,11 +82,13 @@ class ExportFormScreen extends Screen
                 TD::make('path', 'Path')
                     ->filter(Input::make())
                     ->width('300')
+                    ->sort()
                     ->render(function (Tree $tree) {
                         return $tree->path;
                     }),
 
                 TD::make('child_count', 'Child count')
+                    ->width('100')
                     ->render(function (Tree $tree) {
                         return $tree->tree_child_count - 1;
                     }),
