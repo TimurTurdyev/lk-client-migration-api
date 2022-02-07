@@ -12,14 +12,15 @@ class TestController extends Controller
 {
     public function __invoke()
     {
-        $lkImportFile = LkImportFile::findOrFail(1);
+        $lkImportFile = LkImportFile::findOrFail(2);
 
         $file = $lkImportFile->attachment->first();
 
         $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
 
-        $recursiveIteration = new RecursiveIterationData(new ImportRepository());
-        $recursiveIteration->apply($content, '.');
-
+        $importRepository = new ImportRepository();
+        $recursiveIteration = new RecursiveIterationData($importRepository);
+        $recursiveIteration->apply($content);
+        dd($importRepository->getModemsNotFound());
     }
 }

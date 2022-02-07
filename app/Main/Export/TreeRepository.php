@@ -47,8 +47,8 @@ class TreeRepository
                 'tree_data' => $this->treeData($list->id),
                 'modems' => $this->modems($device_idx),
                 'devices' => $devices,
-                'modems_devices_rel' => $this->modems_devices_rel($device_idx),
                 'registrators' => $this->registrators($device_idx),
+                'modems_devices_rel' => $this->modems_devices_rel($device_idx),
                 'devices_registrators_rel' => $this->devices_registrators_rel($device_idx),
                 'data' => $this->searchPathToDepth($find_tree)
             ];

@@ -9,13 +9,13 @@ class Registrator extends Model
 {
     protected $connection = 'mysql_lk';
 
-    protected $table = 'devices';
+    protected $table = 'registrators';
     public $timestamps = false;
     protected $guarded = ['id'];
     protected $primaryKey = 'id';
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->morphOne(LkMigrations::class, 'importable');
+        return $this->morphOne(LkMigration::class, 'importable');
     }
 }

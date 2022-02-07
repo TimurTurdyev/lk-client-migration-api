@@ -12,11 +12,11 @@ class Modem extends Model
 
     protected $table = 'modems';
     public $timestamps = false;
-    protected $guarded = ['id'];
+    protected $guarded = [];
     protected $primaryKey = 'id';
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->morphOne(LkMigrations::class, 'importable');
+        return $this->morphOne(LkMigration::class, 'importable');
     }
 }

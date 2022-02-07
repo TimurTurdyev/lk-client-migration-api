@@ -19,7 +19,7 @@ class RecursiveIterationData
             }
 
             if (method_exists($this->repository, $key)) {
-                if (in_array($key, ['devices', 'registrators'])) {
+                if (in_array($key, ['modems', 'devices', 'registrators', 'modems_devices_rel', 'devices_registrators_rel'])) {
                     foreach ($values as $value) {
                         if ($data = $this->repository->prepare($key, $value)) {
                             $this->repository->{$key}($data);

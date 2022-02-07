@@ -16,6 +16,6 @@ class TreeData extends Model
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->morphOne(LkMigrations::class, 'importable');
+        return $this->morphOne(LkMigration::class, 'importable');
     }
 }
