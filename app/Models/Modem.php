@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TreeData extends Model
+class Modem extends Model
 {
     protected $connection = 'mysql_lk';
 
-    protected $table = 'tree_data';
+    protected $table = 'modems';
     public $timestamps = false;
-    protected $guarded = ['element_id'];
-    protected $primaryKey = 'element_id';
+    protected $guarded = ['id'];
+    protected $primaryKey = 'id';
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {

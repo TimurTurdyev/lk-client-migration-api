@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Device extends Model
 {
-    use HasFactory;
-
     protected $connection = 'mysql_lk';
 
     protected $table = 'devices';
     public $timestamps = false;
-    protected $guarded = [];
+    protected $guarded = ['id'];
     protected $primaryKey = 'id';
+
+    public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(LkMigrations::class, 'importable');
+    }
 }

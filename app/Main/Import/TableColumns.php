@@ -18,12 +18,15 @@ class TableColumns
         $this->schema = collect();
 
         foreach ($this->tables as $table) {
-            $this->schema->put($table, DB::connection()->getSchemaBuilder()->getColumnListing($table));
+            $this->schema->put($table, collect(array_flip(DB::connection('mysql_lk')->getSchemaBuilder()->getColumnListing($table))));
         }
     }
 
     public function getColumns($table): Collection
     {
+        if ($this->schema->get($table) === null) {
+            dd($table, $this->schema->get($table));
+        }
         return $this->schema->get($table);
     }
 }

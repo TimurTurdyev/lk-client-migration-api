@@ -20,7 +20,7 @@ class CreateLkMigrationsTable extends Migration
                 ->constrained('lk_import_files')
                 ->onDelete('SET NULL');
             $table->morphs('importable');
-            $table->integer('old_id');
+            $table->char('old_id', 16)->index();
             $table->timestamp('created_at');
         });
     }

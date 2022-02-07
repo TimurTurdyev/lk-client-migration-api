@@ -12,13 +12,13 @@ use Orchid\Screen\AsSource;
 
 class Tree extends Model
 {
-    use HasFactory, Filterable, AsSource;
+    use Filterable, AsSource;
 
     protected $connection = 'mysql_lk';
 
-    protected $table = 'tree';
     public $timestamps = false;
-    protected $guarded = [];
+    protected $table = 'tree';
+    protected $guarded = ['id'];
     protected $primaryKey = 'id';
 
     /**
@@ -73,5 +73,10 @@ class Tree extends Model
     public function treeChild()
     {
         return $this->hasOne($this, 'id')->orWhere('path', 'like', DB::raw("REPLACE(CONCAT(tree.path, '.', tree.id, '%'), '..', '.')"));
+    }
+
+    public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
+    {
+        return $this->morphOne(LkMigrations::class, 'importable');
     }
 }
