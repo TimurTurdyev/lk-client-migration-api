@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Main\Export\BaseGenerateSql;
+use App\Main\Export\DeviceToTreeRelationRepository;
 use App\Main\Export\TreeRepository;
 use Illuminate\Support\Facades\Cache;
 
@@ -66,5 +67,10 @@ class TreeController extends Controller
         return response()->streamDownload(function () use ($procedure_text) {
             echo $procedure_text;
         }, 'migrate-' . $tree_id . '.sql');
+    }
+
+    public function devicesToTree($tree_id, DeviceToTreeRelationRepository $deviceToTreeRelationRepository)
+    {
+        return response()->json($deviceToTreeRelationRepository->devices($tree_id));
     }
 }

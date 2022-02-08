@@ -77,8 +77,8 @@ class TreeRepository
             $callback([
                 'tree' => $list,
                 'tree_data' => $this->treeData($id),
-                'devices' => $devices,
-                'registrators' => $this->registrators(array_keys($device_id)),
+//                'devices' => $devices,
+//                'registrators' => $this->registrators(array_keys($device_id)),
             ], $parent);
 
             $this->searchPathCallback($find_tree, $callback, $id);
