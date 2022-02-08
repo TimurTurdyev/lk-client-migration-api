@@ -45,12 +45,12 @@ class TreeRepository
             $list_search[] = [
                 'tree' => $list,
                 'tree_data' => $this->treeData($list->id),
-                'modems' => $this->modems($device_idx),
-                'devices' => $devices,
-                'registrators' => $this->registrators($device_idx),
-                'modems_devices_rel' => $this->modems_devices_rel($device_idx),
-                'devices_registrators_rel' => $this->devices_registrators_rel($device_idx),
-                'data' => $this->searchPathToDepth($find_tree)
+//                'modems' => $this->modems($device_idx),
+//                'devices' => $devices,
+//                'registrators' => $this->registrators($device_idx),
+//                'modems_devices_rel' => $this->modems_devices_rel($device_idx),
+//                'devices_registrators_rel' => $this->devices_registrators_rel($device_idx),
+//                'data' => $this->searchPathToDepth($find_tree)
             ];
         }
 
