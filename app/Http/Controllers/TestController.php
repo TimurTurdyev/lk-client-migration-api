@@ -15,11 +15,11 @@ class TestController extends Controller
 {
     public function __invoke($tree)
     {
-        $contents = Http::get('https://migration-client.waviot.ru/api/devices/' . $tree . '?token=' . config('app.main_token'))
-            ->json();
-
-        $deviceToTree = new DeviceToTreeRelationRepository();
-        $deviceToTree->insertToData($contents);
+//        $contents = Http::get('https://migration-client.???.ru/api/devices/' . $tree . '?token=' . config('app.main_token'))
+//            ->json();
+//
+//        $deviceToTree = new DeviceToTreeRelationRepository();
+//        $deviceToTree->insertToData($contents);
         dd('ok');
         $lkImportFile = LkImportFile::findOrFail(2);
 
