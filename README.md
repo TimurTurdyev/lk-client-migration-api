@@ -8,6 +8,15 @@
 
 #### Скопировать
 `cp .env.example .env`
-> И прописать подключение к базе данных в секции *DB_....=*
 
-> Временный токен пока еще в стадии разработки в секции *MAIN_TOKEN=*
+`touch database/database.sqlite`
+#### в .env
+> DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database.sqlite
+#### для ЛК секция
+> *DB_...._LK=*
+
+Вход в админ панель 
+
+`php artisan orchid:admin`
+и создать пользователя
