@@ -53,6 +53,7 @@ class DeviceToTreeRelationRepository
                         $result->config_time = 0;
                         $result->status_messages = '';
                         $result->modem_id = null;
+                        $result->relation = 'secondary';
 
                         $last_id = DB::table('devices')
                             ->insertGetId((array)$result);
