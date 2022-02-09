@@ -6,6 +6,7 @@ use App\Main\Export\DeviceToTreeRelationRepository;
 use App\Main\Export\TreeRepository;
 use App\Models\Tree;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Screen;
@@ -112,7 +113,11 @@ class ExportListScreen extends Screen
      */
     public function export($tree_id, $action, TreeRepository $treeRepository): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $file_name = sprintf('export_%s', $tree_id);
+        $file_name = sprintf('%s_export_%s_to_tree_id_%s',
+            Str::slug(str_replace(['http://', 'https://', '.',], '', config('app.url')), '_'),
+            $action,
+            $tree_id,
+        );
 
         $tree = $treeRepository->find($tree_id);
 
