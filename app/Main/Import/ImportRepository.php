@@ -168,7 +168,8 @@ class ImportRepository implements ImportInterface
                 continue;
             }
 
-            $queryResults = DB::table('devices')
+            $queryResults = DB::connection('mysql_lk')
+                ->table('devices')
                 ->where('parent', '<>', $tree->new_id)
                 ->where('modem_id', '=', $device['modem_id'])
                 ->where('relation', 'primary')
@@ -179,7 +180,8 @@ class ImportRepository implements ImportInterface
                     continue;
                 }
 
-                DB::table('devices')
+                DB::connection('mysql_lk')
+                    ->table('devices')
                     ->where('id', '=', $result->id)
                     ->update([
                         'parent' => $tree->new_id
@@ -199,17 +201,20 @@ class ImportRepository implements ImportInterface
                 $last_id = DB::table('devices')
                     ->insertGetId((array)$result);
 
-                DB::table('modems_devices_rel')
+                DB::connection('mysql_lk')
+                    ->table('modems_devices_rel')
                     ->insertOrIgnore([
                         'device_id' => $last_id,
                         'modem_id' => $modem_id,
                     ]);
 
-                $devicesRegistrators = DB::table('devices_registrators_rel')
+                $devicesRegistrators = DB::connection('mysql_lk')
+                    ->table('devices_registrators_rel')
                     ->where('device_id', $device_primary_id)->get();
 
                 foreach ($devicesRegistrators as $devicesRegistrator) {
-                    DB::table('devices_registrators_rel')
+                    DB::connection('mysql_lk')
+                        ->table('devices_registrators_rel')
                         ->insertOrIgnore([
                             'registrator_id' => $devicesRegistrator->registrator_id,
                             'device_id' => $last_id,

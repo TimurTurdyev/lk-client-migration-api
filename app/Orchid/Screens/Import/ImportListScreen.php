@@ -2,10 +2,14 @@
 
 namespace App\Orchid\Screens\Import;
 
+use App\Main\Import\ImportRepository;
+use App\Main\Import\RecursiveIterationData;
 use App\Models\LkImportFile;
 use App\Orchid\Layouts\Import\ImportFileListLayout;
+use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
+use Orchid\Support\Facades\Toast;
 
 class ImportListScreen extends Screen
 {
@@ -52,5 +56,26 @@ class ImportListScreen extends Screen
         return [
             ImportFileListLayout::class
         ];
+    }
+
+    public function runMigrate(LkImportFile $lkImportFile)
+    {
+        try {
+            $file = $lkImportFile->attachment->first();
+
+            $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
+            $importRepository = new ImportRepository();
+            $recursiveIteration = new RecursiveIterationData($importRepository);
+
+            $recursiveIteration->apply($content);
+        } catch (\Exception $exception) {
+            Toast::error($exception->getMessage());
+            return redirect()->route('platform.import');
+        }
+
+
+        Toast::info(__('File was imported.'));
+
+        return redirect()->route('platform.import');
     }
 }

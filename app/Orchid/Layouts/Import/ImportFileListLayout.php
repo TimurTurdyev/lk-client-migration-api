@@ -3,6 +3,7 @@
 namespace App\Orchid\Layouts\Import;
 
 use App\Models\LkImportFile;
+use App\Models\Tree;
 use Orchid\Platform\Models\User;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
@@ -41,14 +42,6 @@ class ImportFileListLayout extends Table
                     return $lkImportFile->id;
                 }),
 
-            TD::make('description', __('Description'))
-                ->sort()
-                ->cantHide()
-                ->filter(Input::make())
-                ->render(function (LkImportFile $lkImportFile) {
-                    return $lkImportFile->description;
-                }),
-
             TD::make('app_url', __('App url'))
                 ->sort()
                 ->cantHide()
@@ -70,6 +63,15 @@ class ImportFileListLayout extends Table
                 ->render(function (LkImportFile $lkImportFile) {
                     return $lkImportFile->created_at->toDateTimeString();
                 }),
+
+            TD::make('action', 'Action')
+                ->render(function (LkImportFile $lkImportFile) {
+                    return Button::make('Export file')
+                        ->method('runMigrate', ['id' => $lkImportFile->id])
+                        ->icon('cloud-download')
+                        ->rawClick()
+                        ->novalidate();
+                })
         ];
     }
 }

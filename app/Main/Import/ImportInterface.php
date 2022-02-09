@@ -21,4 +21,6 @@ interface ImportInterface
     public function modems_devices_rel(array $data);
 
     public function devices_registrators_rel(array $data);
+
+    public function connect_by_primary_devices(array $data);
 }

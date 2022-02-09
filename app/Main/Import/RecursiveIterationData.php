@@ -24,6 +24,11 @@ class RecursiveIterationData
             }
 
             if (method_exists($this->repository, $key)) {
+                if ($key === 'connect_by_primary_devices') {
+                    $this->repository->{$key}($values);
+                    continue;
+                }
+
                 if (in_array($key, ['modems', 'devices', 'registrators', 'modems_devices_rel', 'devices_registrators_rel'])) {
                     foreach ($values as $value) {
                         if ($data = $this->repository->prepare($key, $value)) {
