@@ -13,14 +13,10 @@ use Illuminate\Support\Facades\Storage;
 
 class TestController extends Controller
 {
-    public function __invoke($tree)
+    public function __invoke($tree = 0)
     {
-//        $contents = Http::get('https://migration-client.???.ru/api/devices/' . $tree . '?token=' . config('app.main_token'))
-//            ->json();
-//
-//        $deviceToTree = new DeviceToTreeRelationRepository();
-//        $deviceToTree->insertToData($contents);
-        dd('ok');
+        dd('Oops...');
+
         $lkImportFile = LkImportFile::findOrFail(2);
 
         $file = $lkImportFile->attachment->first();

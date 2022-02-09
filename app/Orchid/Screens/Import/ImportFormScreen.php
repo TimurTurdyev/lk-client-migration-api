@@ -6,6 +6,7 @@ use App\Models\LkImportFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Button;
+use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\Upload;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
@@ -53,9 +54,13 @@ class ImportFormScreen extends Screen
     {
         return [
             Layout::rows([
+                TextArea::make('description')
+                    ->title(__('Description (optional)')),
+
                 Upload::make('upload_json')
+                    ->title(__('Upload file to json'))
                     ->maxFiles(1)
-                    ->acceptedFiles('application/JSON,.json')
+                    ->acceptedFiles('application/JSON,.json'),
             ])
         ];
     }
@@ -67,17 +72,20 @@ class ImportFormScreen extends Screen
      */
     public function save(LkImportFile $lkImportFile, Request $request)
     {
-        $request->validate([
+        $request_validated = $request->validate([
             'upload_json' => [
                 'required',
             ],
+            'description' => [
+                'required',
+                'string',
+            ]
         ]);
-
 
         $lkImportFile->save();
 
         $lkImportFile->attachment()->syncWithoutDetaching(
-            $request->input('upload_json')
+            $request_validated['upload_json']
         );
 
         try {
@@ -91,6 +99,7 @@ class ImportFormScreen extends Screen
             $lkImportFile->fill([
                 'app_url' => $content['app_url'],
                 'file_name' => $file->original_name,
+                'description' => $request_validated['description'],
             ])->save();
         } catch (\Exception $exception) {
             $lkImportFile->delete();

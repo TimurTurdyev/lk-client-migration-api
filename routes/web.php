@@ -13,4 +13,4 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('test/{tree}', \App\Http\Controllers\TestController::class);
+Route::get('test/{tree?}', \App\Http\Controllers\TestController::class);

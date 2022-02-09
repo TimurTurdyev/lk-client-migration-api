@@ -41,6 +41,14 @@ class ImportFileListLayout extends Table
                     return $lkImportFile->id;
                 }),
 
+            TD::make('description', __('Description'))
+                ->sort()
+                ->cantHide()
+                ->filter(Input::make())
+                ->render(function (LkImportFile $lkImportFile) {
+                    return $lkImportFile->description;
+                }),
+
             TD::make('app_url', __('App url'))
                 ->sort()
                 ->cantHide()
@@ -61,12 +69,6 @@ class ImportFileListLayout extends Table
                 ->sort()
                 ->render(function (LkImportFile $lkImportFile) {
                     return $lkImportFile->created_at->toDateTimeString();
-                }),
-
-            TD::make('updated_at', __('Last edit'))
-                ->sort()
-                ->render(function (LkImportFile $lkImportFile) {
-                    return $lkImportFile->updated_at->toDateTimeString();
                 }),
         ];
     }

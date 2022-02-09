@@ -17,6 +17,7 @@ class CreateLkImportFilesTable extends Migration
             $table->id();
             $table->string('app_url')->default('')->index();
             $table->string('file_name')->default('')->index();
+            $table->string('description')->default('');
             $table->timestamps();
         });
     }

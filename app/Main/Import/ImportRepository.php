@@ -8,7 +8,6 @@ use App\Models\Modem;
 use App\Models\Registrator;
 use App\Models\Tree;
 use App\Models\TreeData;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 
 class ImportRepository implements ImportInterface
@@ -159,6 +158,64 @@ class ImportRepository implements ImportInterface
                     'registrator_id' => $registrator->importable_id,
                     'device_id' => $device->importable_id
                 ]);
+        }
+    }
+
+    public function connect_by_primary_devices(array $devices)
+    {
+        foreach ($devices as $device) {
+            if (!($tree = LkMigration::findTreeOld($device['tree_id'])->first())) {
+                continue;
+            }
+
+            $queryResults = DB::table('devices')
+                ->where('parent', '<>', $tree->new_id)
+                ->where('modem_id', '=', $device['modem_id'])
+                ->where('relation', 'primary')
+                ->get();
+
+            foreach ($queryResults as $result) {
+                if (empty($result->modem_id)) {
+                    continue;
+                }
+
+                DB::table('devices')
+                    ->where('id', '=', $result->id)
+                    ->update([
+                        'parent' => $tree->new_id
+                    ]);
+
+                $device_primary_id = $result->id;
+                $modem_id = $result->modem_id;
+
+                unset($result->id);
+
+                $result->parent = $tree->new_id;
+                $result->config_time = 0;
+                $result->status_messages = '';
+                $result->modem_id = null;
+                $result->relation = 'secondary';
+
+                $last_id = DB::table('devices')
+                    ->insertGetId((array)$result);
+
+                DB::table('modems_devices_rel')
+                    ->insertOrIgnore([
+                        'device_id' => $last_id,
+                        'modem_id' => $modem_id,
+                    ]);
+
+                $devicesRegistrators = DB::table('devices_registrators_rel')
+                    ->where('device_id', $device_primary_id)->get();
+
+                foreach ($devicesRegistrators as $devicesRegistrator) {
+                    DB::table('devices_registrators_rel')
+                        ->insertOrIgnore([
+                            'registrator_id' => $devicesRegistrator->registrator_id,
+                            'device_id' => $last_id,
+                        ]);
+                }
+            }
         }
     }
 

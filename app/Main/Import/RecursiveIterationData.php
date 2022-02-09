@@ -18,6 +18,11 @@ class RecursiveIterationData
                 continue;
             }
 
+            if (!is_string($key) || $key === 'data') {
+                $this->apply($values, $path);
+                continue;
+            }
+
             if (method_exists($this->repository, $key)) {
                 if (in_array($key, ['modems', 'devices', 'registrators', 'modems_devices_rel', 'devices_registrators_rel'])) {
                     foreach ($values as $value) {
@@ -33,10 +38,6 @@ class RecursiveIterationData
                         $path = $p;
                     }
                 }
-            }
-
-            if (!is_string($key) || $key === 'data') {
-                $this->apply($values, $path);
             }
         }
     }

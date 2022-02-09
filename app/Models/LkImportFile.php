@@ -20,6 +20,7 @@ class LkImportFile extends Model
      * @var array
      */
     protected $fillable = [
+        'description',
         'app_url',
         'file_name',
         'created_at',
@@ -53,6 +54,7 @@ class LkImportFile extends Model
         'id',
         'app_url',
         'file_name',
+        'description',
         'created_at',
         'updated_at',
     ];
@@ -65,7 +67,6 @@ class LkImportFile extends Model
     protected $allowedSorts = [
         'id',
         'app_url',
-        'file_name',
         'updated_at',
         'created_at',
     ];
