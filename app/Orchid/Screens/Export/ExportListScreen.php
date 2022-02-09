@@ -114,7 +114,7 @@ class ExportListScreen extends Screen
     public function export($tree_id, $action, TreeRepository $treeRepository): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         $file_name = sprintf('%s_export_%s_to_tree_id_%s',
-            Str::slug(str_replace(['http://', 'https://', '.',], '', config('app.url')), '_'),
+            Str::slug(str_replace(['http://', 'https://'], '', str_replace('.', '_', config('app.url'))), '_'),
             $action,
             $tree_id,
         );
