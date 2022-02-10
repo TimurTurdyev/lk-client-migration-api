@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Orchid\Filters\Filterable;
 use Orchid\Screen\AsSource;
@@ -78,5 +79,12 @@ class Tree extends Model
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
         return $this->morphOne(LkMigration::class, 'importable');
+    }
+
+    public static function count()
+    {
+        return Cache::remember('tree_count', 60 * 5, function () {
+            return static::query()->count();
+        });
     }
 }
