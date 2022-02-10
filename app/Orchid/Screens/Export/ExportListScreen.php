@@ -31,7 +31,10 @@ class ExportListScreen extends Screen
     {
         return [
             'table' => Tree::filters()
-                ->withCount('treeChild')
+                ->withCount(['treeChild' => function($q) {
+                    $q->remember(60 * 5);
+                }])
+                ->remember(60 * 5)
                 ->defaultSort('path', 'asc')
                 ->paginate(),
         ];

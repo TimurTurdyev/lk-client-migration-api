@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32ae3ffd71cded0f91225b85a207c720",
+    "content-hash": "55bac098be31c8f16fb072bfc685f6fa",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -5880,6 +5880,54 @@
                 "source": "https://github.com/dwightwatson/active/tree/6.1.0"
             },
             "time": "2022-01-26T09:54:27+00:00"
+        },
+        {
+            "name": "watson/rememberable",
+            "version": "6.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dwightwatson/rememberable.git",
+                "reference": "54de8c7d421050aabe70523538a2d8957382d4ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dwightwatson/rememberable/zipball/54de8c7d421050aabe70523538a2d8957382d4ca",
+                "reference": "54de8c7d421050aabe70523538a2d8957382d4ca",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^8.0|^9.0",
+                "illuminate/support": "^8.0|^9.0",
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Watson\\Rememberable\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dwight Watson",
+                    "email": "dwight@studiousapp.com"
+                }
+            ],
+            "description": "Query caching for Laravel",
+            "keywords": [
+                "caching",
+                "eloquent",
+                "laravel",
+                "remember"
+            ],
+            "support": {
+                "issues": "https://github.com/dwightwatson/rememberable/issues",
+                "source": "https://github.com/dwightwatson/rememberable/tree/6.0.0"
+            },
+            "time": "2022-02-04T00:49:55+00:00"
         },
         {
             "name": "webmozart/assert",

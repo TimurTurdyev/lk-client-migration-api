@@ -2,18 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Orchid\Filters\Filterable;
 use Orchid\Screen\AsSource;
+use Watson\Rememberable\Rememberable;
 
 class Tree extends Model
 {
-    use Filterable, AsSource;
+    use Filterable, AsSource, Rememberable;
 
     protected $connection = 'mysql_lk';
 
