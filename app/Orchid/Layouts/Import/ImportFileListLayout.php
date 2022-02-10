@@ -66,7 +66,7 @@ class ImportFileListLayout extends Table
 
             TD::make('action', 'Action')
                 ->render(function (LkImportFile $lkImportFile) {
-                    return Button::make('Export file')
+                    return Button::make('Import file')
                         ->method('runMigrate', ['id' => $lkImportFile->id])
                         ->icon('cloud-download')
                         ->rawClick()
