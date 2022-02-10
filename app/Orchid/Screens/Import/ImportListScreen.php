@@ -66,7 +66,6 @@ class ImportListScreen extends Screen
             $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
             $importRepository = new ImportRepository();
             $recursiveIteration = new RecursiveIterationData($importRepository);
-
             $recursiveIteration->apply($content);
         } catch (\Exception $exception) {
             Toast::error($exception->getMessage());

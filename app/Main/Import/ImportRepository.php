@@ -8,6 +8,7 @@ use App\Models\Modem;
 use App\Models\Registrator;
 use App\Models\Tree;
 use App\Models\TreeData;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ImportRepository implements ImportInterface
@@ -18,6 +19,7 @@ class ImportRepository implements ImportInterface
     public function __construct()
     {
         $this->tables = new TableColumns();
+        DB::setDefaultConnection('mysql_lk');
     }
 
     public function prepare(string $table, array $values): array
@@ -164,13 +166,13 @@ class ImportRepository implements ImportInterface
     public function connect_by_primary_devices(array $devices)
     {
         foreach ($devices as $device) {
-            if (!($tree = LkMigration::findTreeOld($device['tree_id'])->first())) {
+            $tree = LkMigration::findTreeOld($device['tree_id'])->first();
+
+            if (empty($tree)) {
                 continue;
             }
 
-            $queryResults = DB::connection('mysql_lk')
-                ->table('devices')
-                ->where('parent', '<>', $tree->new_id)
+            $queryResults = DB::table('devices')
                 ->where('modem_id', '=', $device['modem_id'])
                 ->where('relation', 'primary')
                 ->get();
@@ -180,19 +182,28 @@ class ImportRepository implements ImportInterface
                     continue;
                 }
 
-                DB::connection('mysql_lk')
-                    ->table('devices')
+                DB::table('devices')
                     ->where('id', '=', $result->id)
                     ->update([
-                        'parent' => $tree->new_id
+                        'parent' => $tree->importable_id
                     ]);
+
+                if (DB::table('devices AS d')
+                    ->join('modems_devices_rel AS mdr', 'd.id', '=', 'mdr.device_id')
+                    ->where('d.parent', '=', $tree->importable_id)
+                    ->where('d.relation', 'secondary')
+                    ->where('mdr.modem_id', '=', $device['modem_id'])
+                    ->count(['d.id'])) {
+                    continue;
+                }
+
 
                 $device_primary_id = $result->id;
                 $modem_id = $result->modem_id;
 
                 unset($result->id);
 
-                $result->parent = $tree->new_id;
+                $result->parent = $tree->importable_id;
                 $result->config_time = 0;
                 $result->status_messages = '';
                 $result->modem_id = null;
@@ -201,20 +212,17 @@ class ImportRepository implements ImportInterface
                 $last_id = DB::table('devices')
                     ->insertGetId((array)$result);
 
-                DB::connection('mysql_lk')
-                    ->table('modems_devices_rel')
+                DB::table('modems_devices_rel')
                     ->insertOrIgnore([
                         'device_id' => $last_id,
                         'modem_id' => $modem_id,
                     ]);
 
-                $devicesRegistrators = DB::connection('mysql_lk')
-                    ->table('devices_registrators_rel')
+                $devicesRegistrators = DB::table('devices_registrators_rel')
                     ->where('device_id', $device_primary_id)->get();
 
                 foreach ($devicesRegistrators as $devicesRegistrator) {
-                    DB::connection('mysql_lk')
-                        ->table('devices_registrators_rel')
+                    DB::table('devices_registrators_rel')
                         ->insertOrIgnore([
                             'registrator_id' => $devicesRegistrator->registrator_id,
                             'device_id' => $last_id,
