@@ -5,6 +5,14 @@
 | mysql      |
 | php-dom    |
 
+> На случай если будет импорт большого файла
+
+| Service | Variable             | value |
+|---------|----------------------|-------|
+| PHP     | upload_max_filesize  | 128M  |
+| PHP     | post_max_size        | 128M  |
+| NGINX   | client_max_body_size | 128M  |
+
 ### Установка
 
 `git clone git@github.com:TimurTurdyev/lk-client-migration-api.git`
