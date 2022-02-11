@@ -3,6 +3,7 @@
 | php8       |
 | sqlite3    |
 | mysql      |
+| php-dom    |
 
 ### Установка
 
