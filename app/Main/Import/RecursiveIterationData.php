@@ -46,4 +46,14 @@ class RecursiveIterationData
             }
         }
     }
+
+    public function modemsNotFound(): array
+    {
+        return array_keys($this->repository->getModemsNotFound());
+    }
+
+    public function modemsCountNotFound(): int
+    {
+        return count($this->repository->getModemsNotFound());
+    }
 }

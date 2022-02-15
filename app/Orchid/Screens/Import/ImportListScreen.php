@@ -2,6 +2,10 @@
 
 namespace App\Orchid\Screens\Import;
 
+ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+
 use App\Main\Import\ImportRepository;
 use App\Main\Import\RecursiveIterationData;
 use App\Models\LkImportFile;
@@ -64,7 +68,7 @@ class ImportListScreen extends Screen
             $file = $lkImportFile->attachment->first();
 
             $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
-            $importRepository = new ImportRepository();
+            $importRepository = new ImportRepository($file->id);
             $recursiveIteration = new RecursiveIterationData($importRepository);
             $recursiveIteration->apply($content);
         } catch (\Exception $exception) {
@@ -72,8 +76,13 @@ class ImportListScreen extends Screen
             return redirect()->route('platform.import');
         }
 
+        $message = __('File was imported.');
 
-        Toast::info(__('File was imported.'));
+        if ($modems_count_not_found = $recursiveIteration->modemsCountNotFound()) {
+            $message = sprintf(__('File was imported. But %s modems not found'), $modems_count_not_found) ;
+        }
+
+        Toast::info($message);
 
         return redirect()->route('platform.import');
     }

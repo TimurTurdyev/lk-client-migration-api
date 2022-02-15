@@ -21,7 +21,7 @@ class CreateLkMigrationsTable extends Migration
                 ->onDelete('SET NULL');
             $table->morphs('importable');
             $table->char('old_id', 16)->index();
-            $table->timestamp('created_at');
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 

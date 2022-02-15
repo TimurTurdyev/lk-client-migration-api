@@ -8,16 +8,17 @@ use App\Models\Modem;
 use App\Models\Registrator;
 use App\Models\Tree;
 use App\Models\TreeData;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 class ImportRepository implements ImportInterface
 {
+    private int $file_id;
     private TableColumns $tables;
     private array $modems_not_found = [];
 
-    public function __construct()
+    public function __construct($file_id)
     {
+        $this->file_id = $file_id;
         $this->tables = new TableColumns();
         DB::setDefaultConnection('mysql_lk');
     }
@@ -177,11 +178,12 @@ class ImportRepository implements ImportInterface
                 ->where('relation', 'primary')
                 ->get();
 
-            foreach ($queryResults as $result) {
-                if (empty($result->modem_id)) {
-                    continue;
-                }
+            if (!$queryResults->count()) {
+                $this->modems_not_found[(string)$device['modem_id']] = 0;
+                continue;
+            }
 
+            foreach ($queryResults as $result) {
                 DB::table('devices')
                     ->where('id', '=', $result->id)
                     ->update([
@@ -196,7 +198,6 @@ class ImportRepository implements ImportInterface
                     ->count(['d.id'])) {
                     continue;
                 }
-
 
                 $device_primary_id = $result->id;
                 $modem_id = $result->modem_id;
@@ -234,6 +235,7 @@ class ImportRepository implements ImportInterface
 
     public function migration($data)
     {
+        $data['lk_import_file_id'] = $this->file_id;
         LkMigration::updateOrCreate($data, $data);
     }
 

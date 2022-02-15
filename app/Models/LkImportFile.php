@@ -13,6 +13,7 @@ class LkImportFile extends Model
     use HasFactory, AsSource, Filterable, Attachable;
 
     protected $table = 'lk_import_files';
+    public $connection = 'sqlite';
 
     /**
      * The attributes that are mass assignable.

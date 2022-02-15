@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class LkMigration extends Model
 {
-    public $connection = 'mysql';
+    public $connection = 'sqlite';
 
     protected $table = 'lk_migrations';
     public $timestamps = false;
