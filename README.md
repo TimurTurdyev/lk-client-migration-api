@@ -23,6 +23,7 @@
 Локальный `composer install`
 
 При возникновении трудностей с локальным окружением добавить флаг `--ignore-platform-reqs`
+Либо запустить composer от `php8.0 -f /usr/local/bin/composer [flags]`
 
 #### Скопировать
 `cp .env.example .env`
