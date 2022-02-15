@@ -10,6 +10,7 @@ use App\Main\Import\ImportRepository;
 use App\Main\Import\RecursiveIterationData;
 use App\Models\LkImportFile;
 use App\Orchid\Layouts\Import\ImportFileListLayout;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
@@ -75,6 +76,8 @@ class ImportListScreen extends Screen
             Toast::error($exception->getMessage());
             return redirect()->route('platform.import');
         }
+
+        Cache::flush();
 
         $message = __('File was imported.');
 

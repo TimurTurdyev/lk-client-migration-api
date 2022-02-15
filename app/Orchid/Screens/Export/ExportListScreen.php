@@ -35,6 +35,7 @@ class ExportListScreen extends Screen
                     $q->remember(60 * 5);
                 }])
                 ->remember(60 * 5)
+                ->prefix('tree')
                 ->defaultSort('path', 'asc')
                 ->paginate(),
         ];

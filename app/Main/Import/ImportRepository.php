@@ -41,12 +41,11 @@ class ImportRepository implements ImportInterface
         $old_id = $data['id'];
         $tree_id = null;
 
-        if ($migrate = LkMigration::findTreeOld($data['id'])->first()) {
+        if ($migrate = LkMigration::findTreeOld($old_id)->first()) {
             $tree_id = $migrate->importable_id;
-        } else {
-            unset($data['id']);
         }
 
+        $data['id'] = $tree_id;
         $data['path'] = $path;
 
         $tree = Tree::updateOrCreate([
@@ -69,14 +68,14 @@ class ImportRepository implements ImportInterface
         $old_id = $data['element_id'];
         $tree_id = null;
 
-        if ($migrate = LkMigration::findTreeDataOld($data['element_id'])->first()) {
+        if ($migrate = LkMigration::findTreeDataOld($old_id)->first()) {
             $tree_id = $migrate->importable_id;
-        } else {
-            unset($data['element_id']);
         }
 
+        $data['element_id'] = $tree_id;
+
         $tree_data = TreeData::updateOrCreate([
-            'element_id' => $tree_id
+            'element_id' => $data['element_id']
         ], $data);
 
         $this->migration([
@@ -236,7 +235,11 @@ class ImportRepository implements ImportInterface
     public function migration($data)
     {
         $data['lk_import_file_id'] = $this->file_id;
-        LkMigration::updateOrCreate($data, $data);
+
+        LkMigration::updateOrCreate([
+            'importable_type' => $data['importable_type'],
+            'old_id' => $data['old_id'],
+        ], $data);
     }
 
     public function getModemsNotFound(): array

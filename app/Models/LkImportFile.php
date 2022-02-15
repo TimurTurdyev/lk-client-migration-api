@@ -21,6 +21,7 @@ class LkImportFile extends Model
      * @var array
      */
     protected $fillable = [
+        'lk_import_file_id',
         'description',
         'app_url',
         'file_name',
