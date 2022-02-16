@@ -39,6 +39,14 @@ Route::screen('export', \App\Orchid\Screens\Export\ExportListScreen::class)
     });
 
 // Import
+Route::screen('import/modems_notfound/{lk_import_file}', \App\Orchid\Screens\Import\ModemsFromImportListScreen::class)
+    ->name('platform.import.modems_notfound')
+    ->breadcrumbs(function (Trail $trail, $item) {
+        return $trail
+            ->parent('platform.import')
+            ->push('Список модемов', route('platform.import.modems_notfound', $item));
+    });
+
 Route::screen('import/create', \App\Orchid\Screens\Import\ImportFormScreen::class)
     ->name('platform.import.create')
     ->breadcrumbs(function (Trail $trail) {

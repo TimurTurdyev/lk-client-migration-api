@@ -64,14 +64,24 @@ class ImportFileListLayout extends Table
                     return $lkImportFile->created_at->toDateTimeString();
                 }),
 
-            TD::make('action', 'Action')
+            TD::make(__('Actions'))
+                ->align(TD::ALIGN_CENTER)
+                ->width('100px')
                 ->render(function (LkImportFile $lkImportFile) {
-                    return Button::make('Import file')
-                        ->method('runMigrate', ['id' => $lkImportFile->id])
-                        ->icon('cloud-download')
-                        ->rawClick()
-                        ->novalidate();
-                })
+                    return DropDown::make()
+                        ->icon('options-vertical')
+                        ->list([
+                            Link::make(__('Show modems not found'))
+                                ->route('platform.import.modems_notfound', $lkImportFile->id)
+                                ->icon('eye'),
+
+                            Button::make('Execute')
+                                ->method('runMigrate', ['id' => $lkImportFile->id])
+                                ->icon('cloud-upload')
+                                ->rawClick()
+                                ->novalidate(),
+                        ]);
+                }),
         ];
     }
 }

@@ -14,6 +14,9 @@ class Modem extends Model
     public $timestamps = false;
     protected $guarded = [];
     protected $primaryKey = 'id';
+    protected $casts = [
+        'id' => 'string'
+    ];
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
