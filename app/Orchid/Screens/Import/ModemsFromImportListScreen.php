@@ -6,15 +6,13 @@ use App\Main\Api\ApiClient;
 use App\Models\LkImportFile;
 use App\Models\Modem;
 use App\Models\Tree;
-use App\Orchid\Layouts\User\UserEditLayout;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\ModalToggle;
-use Orchid\Screen\Field;
 use Orchid\Screen\Fields\Code;
+use Orchid\Screen\Layouts\Modal;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
@@ -45,7 +43,9 @@ class ModemsFromImportListScreen extends Screen
             $file = $lkImportFile->attachment->first();
 
             $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
-            $paginator = $this->paginate(collect($content['data']['connect_by_primary_devices']));
+            $paginator = $this->paginate(collect($content['data']['connect_by_primary_devices']), 50, null, [
+                'path' => request()->url()
+            ]);
 
             $this->modems_exist = Modem::whereIn('id', $paginator->map(fn($item) => $item['modem_id'])->toArray())
                 ->get('id')
@@ -122,6 +122,8 @@ class ModemsFromImportListScreen extends Screen
             Layout::modal('oneAsyncApiModal', Layout::rows([
                 Code::make('modem')->language(Code::JS)
             ]))
+                ->size(Modal::SIZE_LG)
+                ->withoutApplyButton()
                 ->async('asyncGetApiModem'),
         ];
     }
