@@ -74,19 +74,27 @@ class ImportRepository implements ImportInterface
 
     public function data_to_tree(array $rows)
     {
+        /*
+         * Сначала создадим или обновим модемы,
+         * При тестах выявлялись девайсы в которых
+         * Модемы были из другой ветки и как следствие будет ошибка
+         * Если модема еще не существует на сервере
+         */
         foreach ($rows as $row) {
-            $migrateTree = MigrateTree::findNewId($row['tree_id'])->first();
-
-            if (empty($migrateTree)) {
-                continue;
-            }
-
             foreach ($row['modems'] as $modem) {
                 if ($data = $this->prepare('modems', $modem)) {
                     Modem::updateOrCreate([
                         'id' => $modem['id']
                     ], $data);
                 }
+            }
+        }
+
+        foreach ($rows as $row) {
+            $migrateTree = MigrateTree::findNewId($row['tree_id'])->first();
+
+            if (empty($migrateTree)) {
+                continue;
             }
 
             foreach ($row['devices'] as $device) {
@@ -141,75 +149,6 @@ class ImportRepository implements ImportInterface
                                 'device_id' => $deviceSecondary->id,
                             ]);
                     }
-                }
-            }
-        }
-    }
-
-    public function connect_by_primary_devices(array $devices)
-    {
-        foreach ($devices as $device) {
-            $tree = MigrateTree::findTreeOld($device['tree_id'])->first();
-
-            if (empty($tree)) {
-                continue;
-            }
-
-            $queryResults = DB::table('devices')
-                ->where('modem_id', '=', $device['modem_id'])
-                ->where('relation', 'primary')
-                ->get();
-
-            if (!$queryResults->count()) {
-                $this->modems_not_found[(string)$device['modem_id']] = 0;
-                continue;
-            }
-
-            foreach ($queryResults as $result) {
-                DB::table('devices')
-                    ->where('id', '=', $result->id)
-                    ->update([
-                        'parent' => $tree->importable_id
-                    ]);
-
-                if (DB::table('devices AS d')
-                    ->join('modems_devices_rel AS mdr', 'd.id', '=', 'mdr.device_id')
-                    ->where('d.parent', '=', $tree->importable_id)
-                    ->where('d.relation', 'secondary')
-                    ->where('mdr.modem_id', '=', $device['modem_id'])
-                    ->count(['d.id'])) {
-                    continue;
-                }
-
-                $device_primary_id = $result->id;
-                $modem_id = $result->modem_id;
-
-                unset($result->id);
-
-                $result->parent = $tree->importable_id;
-                $result->config_time = 0;
-                $result->status_messages = '';
-                $result->modem_id = null;
-                $result->relation = 'secondary';
-
-                $last_id = DB::table('devices')
-                    ->insertGetId((array)$result);
-
-                DB::table('modems_devices_rel')
-                    ->insertOrIgnore([
-                        'device_id' => $last_id,
-                        'modem_id' => $modem_id,
-                    ]);
-
-                $devicesRegistrators = DB::table('devices_registrators_rel')
-                    ->where('device_id', $device_primary_id)->get();
-
-                foreach ($devicesRegistrators as $devicesRegistrator) {
-                    DB::table('devices_registrators_rel')
-                        ->insertOrIgnore([
-                            'registrator_id' => $devicesRegistrator->registrator_id,
-                            'device_id' => $last_id,
-                        ]);
                 }
             }
         }
