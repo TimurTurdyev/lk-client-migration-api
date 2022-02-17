@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateLkImportFilesTable extends Migration
+class CreateMigrateTreesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateLkImportFilesTable extends Migration
      */
     public function up()
     {
-        Schema::create('lk_import_files', function (Blueprint $table) {
+        Schema::create('migrate_trees', function (Blueprint $table) {
             $table->id();
-            $table->string('app_url')->default('')->index();
-            $table->string('file_name')->default('')->index();
-            $table->string('description')->default('');
-            $table->timestamps();
+            $table->integer('old_id');
+            $table->integer('new_id');
+
+            $table->unique(['old_id', 'new_id']);
+
+            $table->timestamp('created_at')->useCurrent();
         });
     }
 
@@ -29,6 +31,6 @@ class CreateLkImportFilesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lk_import_files');
+        Schema::dropIfExists('migrate_trees');
     }
 }

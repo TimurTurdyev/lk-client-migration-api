@@ -8,11 +8,11 @@ use Orchid\Attachment\Attachable;
 use Orchid\Filters\Filterable;
 use Orchid\Screen\AsSource;
 
-class LkImportFile extends Model
+class MigrateFile extends Model
 {
     use HasFactory, AsSource, Filterable, Attachable;
 
-    protected $table = 'lk_import_files';
+    protected $table = 'migrate_files';
     public $connection = 'sqlite';
 
     /**
@@ -21,7 +21,6 @@ class LkImportFile extends Model
      * @var array
      */
     protected $fillable = [
-        'lk_import_file_id',
         'description',
         'app_url',
         'file_name',

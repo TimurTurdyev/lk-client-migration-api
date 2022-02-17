@@ -13,47 +13,21 @@ class RecursiveIterationData
 
     public function apply(array $data, $path = '.'): void
     {
-        foreach ($data as $key => $values) {
-            if (empty($values)) {
-                continue;
-            }
-
-            if (!is_string($key) || $key === 'data') {
+        if (!isset($data['tree'])) {
+            foreach ($data as $values) {
                 $this->apply($values, $path);
-                continue;
             }
-
-            if (method_exists($this->repository, $key)) {
-                if ($key === 'connect_by_primary_devices') {
-                    $this->repository->{$key}($values);
-                    continue;
-                }
-
-                if (in_array($key, ['modems', 'devices', 'registrators', 'modems_devices_rel', 'devices_registrators_rel'])) {
-                    foreach ($values as $value) {
-                        if ($data = $this->repository->prepare($key, $value)) {
-                            $this->repository->{$key}($data);
-                        }
-                    }
-                    continue;
-                }
-
-                if ($data = $this->repository->prepare($key, $values)) {
-                    if ($p = $this->repository->{$key}($data, $path)) {
-                        $path = $p;
-                    }
-                }
-            }
+            return;
         }
-    }
 
-    public function modemsNotFound(): array
-    {
-        return array_keys($this->repository->getModemsNotFound());
-    }
+        $path = $this->repository->tree($data['tree'], $data['tree_data'], $path) ?: $path;
 
-    public function modemsCountNotFound(): int
-    {
-        return count($this->repository->getModemsNotFound());
+        if (!empty($data['data'])) {
+            $this->apply($data['data'], $path);
+        };
+
+        if (isset($data['data_to_tree'])) {
+            $this->repository->data_to_tree($data['data_to_tree']);
+        }
     }
 }

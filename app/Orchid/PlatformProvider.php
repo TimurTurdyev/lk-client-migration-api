@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Orchid;
 
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 use App\Models\Tree;
 use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
@@ -42,7 +42,7 @@ class PlatformProvider extends OrchidServiceProvider
                 ->icon('monitor')
                 ->route('platform.import')
                 ->badge(function () {
-                    return LkImportFile::count();
+                    return MigrateFile::count();
                 }),
 
             /*

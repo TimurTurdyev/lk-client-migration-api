@@ -2,11 +2,11 @@
 
 namespace App\Observers;
 
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 
 class LkImportFileObserver
 {
-    public function deleting(LkImportFile $lkImportFile)
+    public function deleting(MigrateFile $lkImportFile)
     {
         //load attachment as collection and not query attachment()
         if ($lkImportFile->attachment) {

@@ -3,7 +3,7 @@
 namespace App\Orchid\Screens\Import;
 
 use App\Main\Api\ApiClient;
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 use App\Models\Modem;
 use App\Models\Tree;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -35,7 +35,7 @@ class ModemsFromImportListScreen extends Screen
      *
      * @return array
      */
-    public function query(LkImportFile $lkImportFile): array
+    public function query(MigrateFile $lkImportFile): array
     {
         $this->name = sprintf($this->name, $lkImportFile->id);
 

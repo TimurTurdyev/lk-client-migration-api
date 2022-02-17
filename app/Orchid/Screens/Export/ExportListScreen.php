@@ -2,6 +2,7 @@
 
 namespace App\Orchid\Screens\Export;
 
+use App\Main\Export\DataToTreeRepository;
 use App\Main\Export\DeviceToTreeRelationRepository;
 use App\Main\Export\TreeRepository;
 use App\Models\Tree;
@@ -112,37 +113,29 @@ class ExportListScreen extends Screen
     }
 
     /**
-     * @param $tree_id
+     * @param Tree $tree
      * @return \Symfony\Component\HttpFoundation\StreamedResponse
      */
-    public function export($tree_id, $action, TreeRepository $treeRepository): \Symfony\Component\HttpFoundation\StreamedResponse
+    public function export(Tree $tree): \Symfony\Component\HttpFoundation\StreamedResponse
     {
-        $file_name = sprintf('%s_export_%s_to_%s',
+        $file_name = sprintf('%s_export_to_%s',
             date('Y_m_d_H_i_s'),
-            $action,
-            $tree_id,
+            $tree->id,
         );
 
-        $tree = $treeRepository->find($tree_id);
-
-        abort_if(is_null($tree), 404, 'Not found tree: ' . $tree_id . '!');
-
         $timer = 1;
-        $treeRepository->setAction($action);
 
-        $result = Cache::remember($file_name, $timer, function () use ($treeRepository, $tree, $timer) {
+        $result = Cache::remember($file_name, $timer, function () use ($tree, $timer) {
 
-            $data = $treeRepository->searchPathToDepth([$tree])[0] ?? [];
+            $treeRepository = new TreeRepository();
+            $dataToTree = new DataToTreeRepository();
 
-            if ($treeRepository->getAction() !== 'full_data') {
-                $deviceToTreeRelationRepository = new DeviceToTreeRelationRepository();
-                $data['connect_by_primary_devices'] = $deviceToTreeRelationRepository->devices($tree->id);
-            }
+            $data = $treeRepository->searchPathToDepth([$tree])[0];
+            $data['data_to_tree'] = $dataToTree->getData($tree->id);
 
             return json_encode([
-                'action' => $treeRepository->getAction(),
                 'app_url' => config('app.url'),
-                'sql_count' => $treeRepository->getSqlCount(),
+                'sql_count' => $treeRepository->getSqlCount() + $dataToTree->getSqlCount(),
                 'caching_time_up_to' => now()->addSeconds($timer),
                 'export_tree_id' => $tree->id,
                 'data' => $data,

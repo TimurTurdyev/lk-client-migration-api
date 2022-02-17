@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);
 
 use App\Main\Import\ImportRepository;
 use App\Main\Import\RecursiveIterationData;
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 use App\Orchid\Layouts\Import\ImportFileListLayout;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +33,7 @@ class ImportListScreen extends Screen
     public function query(): array
     {
         return [
-            'lk_import_files' => LkImportFile::filters()->defaultSort('id', 'desc')->paginate()
+            'lk_import_files' => MigrateFile::filters()->defaultSort('id', 'desc')->paginate()
         ];
     }
 
@@ -63,15 +63,17 @@ class ImportListScreen extends Screen
         ];
     }
 
-    public function runMigrate(LkImportFile $lkImportFile)
+    public function runMigrate(MigrateFile $lkImportFile): \Illuminate\Http\RedirectResponse
     {
         try {
             $file = $lkImportFile->attachment->first();
 
             $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
-            $importRepository = new ImportRepository($file->id);
-            $recursiveIteration = new RecursiveIterationData($importRepository);
-            $recursiveIteration->apply($content);
+            $recursiveIteration = new RecursiveIterationData(
+                new ImportRepository()
+            );
+
+            $recursiveIteration->apply($content['data']);
         } catch (\Exception $exception) {
             Toast::error($exception->getMessage());
             return redirect()->route('platform.import');
@@ -79,13 +81,7 @@ class ImportListScreen extends Screen
 
         Cache::flush();
 
-        $message = __('File was imported.');
-
-        if ($modems_count_not_found = $recursiveIteration->modemsCountNotFound()) {
-            $message = sprintf(__('File was imported. But %s modems not found'), $modems_count_not_found) ;
-        }
-
-        Toast::info($message);
+        Toast::info(__('File was imported.'));
 
         return redirect()->route('platform.import');
     }

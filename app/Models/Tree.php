@@ -49,7 +49,7 @@ class Tree extends Model
 
     public function import(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
-        return $this->morphOne(LkMigration::class, 'importable');
+        return $this->morphOne(MigrateTree::class, 'importable');
     }
 
     public static function count()

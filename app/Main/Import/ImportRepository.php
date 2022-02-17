@@ -3,22 +3,18 @@
 namespace App\Main\Import;
 
 use App\Models\Device;
-use App\Models\LkMigration;
+use App\Models\MigrateTree;
 use App\Models\Modem;
-use App\Models\Registrator;
 use App\Models\Tree;
 use App\Models\TreeData;
 use Illuminate\Support\Facades\DB;
 
 class ImportRepository implements ImportInterface
 {
-    private int $file_id;
     private TableColumns $tables;
-    private array $modems_not_found = [];
 
-    public function __construct($file_id)
+    public function __construct()
     {
-        $this->file_id = $file_id;
         $this->tables = new TableColumns();
         DB::setDefaultConnection('mysql_lk');
     }
@@ -36,137 +32,124 @@ class ImportRepository implements ImportInterface
         return $values;
     }
 
-    public function tree($data, $path = '.')
+    public function tree($tree, $tree_data = [], $path = '.')
     {
-        $old_id = $data['id'];
+        $tree = $this->prepare('tree', $tree);
+        $tree_data = $this->prepare('tree_data', $tree_data ?? []);
+
+        $old_id = $tree['id'];
         $tree_id = null;
 
-        if ($migrate = LkMigration::findTreeOld($old_id)->first()) {
-            $tree_id = $migrate->importable_id;
+        if ($migrateTree = MigrateTree::findNewId($old_id)->first()) {
+            $tree_id = $migrateTree->new_id;
         }
 
-        $data['id'] = $tree_id;
-        $data['path'] = $path;
+        $tree['id'] = $tree_id;
+        $tree['path'] = $path;
 
-        $tree = Tree::updateOrCreate([
-            'id' => $tree_id
-        ], $data);
+        $modelTree = Tree::updateOrCreate([
+            'id' => $tree['id']
+        ], $tree);
 
-        $path = str_replace('..', '.', sprintf('%s.%s', $path, $tree->id));
 
-        $this->migration([
-            'importable_type' => 'tree',
-            'importable_id' => $tree->id,
-            'old_id' => $old_id,
-        ]);
+        $path = str_replace('..', '.', sprintf('%s.%s', $path, $modelTree->id));
+
+        if ($tree_data) {
+            $tree_data['element_id'] = $modelTree->id;
+
+            TreeData::updateOrCreate([
+                'element_id' => $tree_data['element_id']
+            ], $tree_data);
+        }
+
+        if (is_null($tree_id)) {
+            MigrateTree::updateOrCreate([
+                'old_id' => $old_id,
+                'new_id' => $modelTree->id
+            ]);
+        }
 
         return $path;
     }
 
-    public function tree_data($data)
+    public function data_to_tree(array $rows)
     {
-        $old_id = $data['element_id'];
-        $tree_id = null;
+        foreach ($rows as $row) {
+            $migrateTree = MigrateTree::findNewId($row['tree_id'])->first();
 
-        if ($migrate = LkMigration::findTreeDataOld($old_id)->first()) {
-            $tree_id = $migrate->importable_id;
-        }
+            if (empty($migrateTree)) {
+                continue;
+            }
 
-        $data['element_id'] = $tree_id;
+            foreach ($row['modems'] as $modem) {
+                if ($data = $this->prepare('modems', $modem)) {
+                    Modem::updateOrCreate([
+                        'id' => $modem['id']
+                    ], $data);
+                }
+            }
 
-        $tree_data = TreeData::updateOrCreate([
-            'element_id' => $data['element_id']
-        ], $data);
+            foreach ($row['devices'] as $device) {
 
-        $this->migration([
-            'importable_type' => 'tree_data',
-            'importable_id' => $tree_data->element_id,
-            'old_id' => $old_id,
-        ]);
-    }
+                $device['parent'] = $migrateTree->new_id;
 
-    public function modems($data)
-    {
-        Modem::updateOrCreate([
-            'id' => $data['id']
-        ], $data);
-    }
+                if ($data = $this->prepare('devices', $device)) {
+                    $modem_id = $device['modem_id'];
 
-    public function devices($data)
-    {
-        $old_id = $data['id'];
-        $device_id = null;
+                    $devicePrimary = Device::updateOrCreate([
+                        'parent' => $device['parent'],
+                        'modem_id' => $device['modem_id'],
+                        'relation' => 'primary'
+                    ], $data);
 
-        if ($migrate = LkMigration::findDeviceOld($data['id'])->first()) {
-            $device_id = $migrate->importable_id;
-        } else {
-            unset($data['id']);
-        }
+                    DB::table('modems_devices_rel')
+                        ->insertOrIgnore([
+                            'device_id' => $devicePrimary->id,
+                            'modem_id' => $modem_id,
+                        ]);
 
-        $device = Device::updateOrCreate([
-            'id' => $device_id
-        ], $data);
+                    $device_secondary = DB::table('devices AS d')
+                        ->join('modems_devices_rel AS mdr', 'd.id', '=', 'mdr.device_id')
+                        ->where('d.parent', '=', $device['parent'])
+                        ->where('d.relation', 'secondary')
+                        ->where('mdr.modem_id', '=', $device['modem_id'])
+                        ->first(['d.id']);
 
-        $this->migration([
-            'importable_type' => 'devices',
-            'importable_id' => $device->id,
-            'old_id' => $old_id,
-        ]);
-    }
+                    $data['config_time'] = 0;
+                    $data['status_messages'] = '';
+                    $data['modem_id'] = null;
+                    $data['relation'] = 'secondary';
 
-    public function registrators($data)
-    {
-        $old_id = $data['id'];
-        $registrator_id = null;
+                    $deviceSecondary = Device::updateOrCreate([
+                        'id' => $device_secondary?->id
+                    ], $data);
 
-        if ($migrate = LkMigration::findRegistratorOld($data['id'])->first()) {
-            $registrator_id = $migrate->importable_id;
-        } else {
-            unset($data['id']);
-        }
+                    DB::table('modems_devices_rel')
+                        ->insertOrIgnore([
+                            'device_id' => $deviceSecondary->id,
+                            'modem_id' => $modem_id,
+                        ]);
 
-        $registrators = Registrator::updateOrCreate([
-            'id' => $registrator_id
-        ], $data);
+                    $devicesRegistrators = DB::table('devices_registrators_rel')
+                        ->where('device_id', $devicePrimary->id)
+                        ->get();
 
-        $this->migration([
-            'importable_type' => 'devices',
-            'importable_id' => $registrators->id,
-            'old_id' => $old_id,
-        ]);
-    }
-
-    public function modems_devices_rel($data)
-    {
-        if ($find = LkMigration::findDeviceOld($data['device_id'])->first()) {
-            DB::connection('mysql_lk')
-                ->table('modems_devices_rel')
-                ->insertOrIgnore([
-                    'modem_id' => $data['modem_id'],
-                    'device_id' => $find->importable_id,
-                ]);
-        }
-    }
-
-    public function devices_registrators_rel($data)
-    {
-        if (
-            ($registrator = LkMigration::findRegistratorOld($data['registrator_id'])->first()) &&
-            ($device = LkMigration::findDeviceOld($data['device_id'])->first())
-        ) {
-            DB::connection('mysql_lk')
-                ->table('devices_registrators_rel')
-                ->insertOrIgnore([
-                    'registrator_id' => $registrator->importable_id,
-                    'device_id' => $device->importable_id
-                ]);
+                    foreach ($devicesRegistrators as $devicesRegistrator) {
+                        DB::table('devices_registrators_rel')
+                            ->insertOrIgnore([
+                                'registrator_id' => $devicesRegistrator->registrator_id,
+                                'device_id' => $deviceSecondary->id,
+                            ]);
+                    }
+                }
+            }
         }
     }
 
     public function connect_by_primary_devices(array $devices)
     {
         foreach ($devices as $device) {
-            $tree = LkMigration::findTreeOld($device['tree_id'])->first();
+            $tree = MigrateTree::findTreeOld($device['tree_id'])->first();
 
             if (empty($tree)) {
                 continue;
@@ -230,20 +213,5 @@ class ImportRepository implements ImportInterface
                 }
             }
         }
-    }
-
-    public function migration($data)
-    {
-        $data['lk_import_file_id'] = $this->file_id;
-
-        LkMigration::updateOrCreate([
-            'importable_type' => $data['importable_type'],
-            'old_id' => $data['old_id'],
-        ], $data);
-    }
-
-    public function getModemsNotFound(): array
-    {
-        return $this->modems_not_found;
     }
 }

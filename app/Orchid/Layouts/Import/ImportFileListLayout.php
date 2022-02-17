@@ -2,7 +2,7 @@
 
 namespace App\Orchid\Layouts\Import;
 
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 use App\Models\Tree;
 use Orchid\Platform\Models\User;
 use Orchid\Screen\Actions\Button;
@@ -38,7 +38,7 @@ class ImportFileListLayout extends Table
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
-                ->render(function (LkImportFile $lkImportFile) {
+                ->render(function (MigrateFile $lkImportFile) {
                     return $lkImportFile->id;
                 }),
 
@@ -46,7 +46,7 @@ class ImportFileListLayout extends Table
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
-                ->render(function (LkImportFile $lkImportFile) {
+                ->render(function (MigrateFile $lkImportFile) {
                     return $lkImportFile->app_url;
                 }),
 
@@ -54,26 +54,26 @@ class ImportFileListLayout extends Table
                 ->sort()
                 ->cantHide()
                 ->filter(Input::make())
-                ->render(function (LkImportFile $lkImportFile) {
+                ->render(function (MigrateFile $lkImportFile) {
                     return $lkImportFile->file_name;
                 }),
 
             TD::make('created_at', __('Created'))
                 ->sort()
-                ->render(function (LkImportFile $lkImportFile) {
+                ->render(function (MigrateFile $lkImportFile) {
                     return $lkImportFile->created_at->toDateTimeString();
                 }),
 
             TD::make(__('Actions'))
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
-                ->render(function (LkImportFile $lkImportFile) {
+                ->render(function (MigrateFile $lkImportFile) {
                     return DropDown::make()
                         ->icon('options-vertical')
                         ->list([
-                            Link::make(__('Show modems not found'))
-                                ->route('platform.import.modems_notfound', $lkImportFile->id)
-                                ->icon('eye'),
+//                            Link::make(__('Show modems not found'))
+//                                ->route('platform.import.modems_notfound', $lkImportFile->id)
+//                                ->icon('eye'),
 
                             Button::make('Execute')
                                 ->method('runMigrate', ['id' => $lkImportFile->id])

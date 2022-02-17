@@ -2,7 +2,7 @@
 
 namespace App\Orchid\Screens\Import;
 
-use App\Models\LkImportFile;
+use App\Models\MigrateFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Orchid\Screen\Actions\Button;
@@ -55,7 +55,7 @@ class ImportFormScreen extends Screen
         return [
             Layout::rows([
                 TextArea::make('description')
-                    ->title(__('Description (optional)')),
+                    ->title(__('Description')),
 
                 Upload::make('upload_json')
                     ->title(__('Upload file to json'))
@@ -66,11 +66,11 @@ class ImportFormScreen extends Screen
     }
 
     /**
-     * @param LkImportFile $lkImportFile
+     * @param MigrateFile $migrate_file
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function save(LkImportFile $lkImportFile, Request $request)
+    public function save(MigrateFile $migrate_file, Request $request)
     {
         $request_validated = $request->validate([
             'upload_json' => [
@@ -82,27 +82,27 @@ class ImportFormScreen extends Screen
             ]
         ]);
 
-        $lkImportFile->save();
+        $migrate_file->save();
 
-        $lkImportFile->attachment()->syncWithoutDetaching(
+        $migrate_file->attachment()->syncWithoutDetaching(
             $request_validated['upload_json']
         );
 
         try {
-            $file = $lkImportFile->attachment()->first();
+            $file = $migrate_file->attachment()->first();
             $content = json_decode(Storage::disk('public')->get($file->physicalPath()), true);
 
             if (empty($content['app_url']) || empty($content['data'])) {
                 throw new \Exception('Ошибка в содержимом файла!');
             }
 
-            $lkImportFile->fill([
+            $migrate_file->fill([
                 'app_url' => $content['app_url'],
                 'file_name' => $file->original_name,
                 'description' => $request_validated['description'],
             ])->save();
         } catch (\Exception $exception) {
-            $lkImportFile->delete();
+            $migrate_file->delete();
             Toast::error($exception->getMessage());
             return redirect()->route('platform.import.create');
         }
