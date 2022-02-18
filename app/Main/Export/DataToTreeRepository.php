@@ -35,7 +35,7 @@ class DataToTreeRepository
                     ->where('id', $row->modem_id)
                     ->get(),
                 'devices' => DB::table('devices')
-                    ->where('parent', $row->tree_id)
+                    ->where('parent', (string)$row->tree_id)
                     ->where('relation', 'primary')
                     ->get(),
             ];
