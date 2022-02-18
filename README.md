@@ -18,9 +18,10 @@
 `git clone git@github.com:TimurTurdyev/lk-client-migration-api.git`
 
 #### Установить пакеты
-
-> Боевой `composer install --no-dev` <br>
-Локальный `composer install`
+| Server     | Params                       |
+|------------|------------------------------|
+| Боевой     | `composer install --no-dev`  |
+| Локальный  | `composer install`           |
 
 При возникновении трудностей с локальным окружением добавить флаг `--ignore-platform-reqs`
 Либо запустить composer от `php8.0 -f /usr/local/bin/composer [flags]`
@@ -33,7 +34,8 @@
 #### Прописать .env
 
 > Для локальной <br> DB_CONNECTION=sqlite <br>
-DB_DATABASE=/absolute/path/to/database.sqlite <br><hr> Для ЛК секция <br> *DB_...._LK=*
+DB_DATABASE=/absolute/path/to/database.sqlite <br><hr> 
+> Для ЛК секция <br> DB_................_LK=*
 
 
 И выполнить `php artisan migrate`
@@ -44,5 +46,5 @@ DB_DATABASE=/absolute/path/to/database.sqlite <br><hr> Для ЛК секция 
 
 ### Обновление
 
-`composer update` <br>
+`composer update` or `php8.0 -f /path-to/composer update` <br>
 И выполнить `php artisan migrate`

@@ -11,12 +11,12 @@ return [
 
         'firstname' => env('JWT_FIRSTNAME', ''),
         'lastname' => env('JWT_LASTNAME', ''),
-        'middleName' => env('JWT_MIDDLENAME', ''),
+        'middleName' => env('JWT_MIDDLE_NAME', ''),
 
         'salt_jwt' => env('JWT_SALT_JWT', ''),
         'iss' => env('JWT_ISS', ''),
         'aud' => env('JWT_AUD', ''),
-        'headEmail' => env('JWT_HEADEMAIL', ''),
+        'headEmail' => env('JWT_HEAD_EMAIL', ''),
         'account_id' => env('JWT_ACCOUNT_ID', ''),
         'lk_id' => env('JWT_LK_ID', ''),
         'b_id' => env('JWT_B_ID', ''),
