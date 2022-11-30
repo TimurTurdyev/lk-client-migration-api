@@ -110,7 +110,9 @@ return [
 
     'resource' => [
         'stylesheets' => [],
-        'scripts'     => [],
+        'scripts'     => [
+            //'https://code.jquery.com/jquery-3.6.0.min.js'
+        ],
     ],
 
     /*

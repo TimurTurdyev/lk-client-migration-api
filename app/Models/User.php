@@ -6,7 +6,6 @@ use Orchid\Platform\Models\User as Authenticatable;
 
 class User extends Authenticatable
 {
-    public $connection = 'sqlite';
     /**
      * The attributes that are mass assignable.
      *

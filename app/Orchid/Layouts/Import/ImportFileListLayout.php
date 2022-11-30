@@ -68,19 +68,11 @@ class ImportFileListLayout extends Table
                 ->align(TD::ALIGN_CENTER)
                 ->width('100px')
                 ->render(function (MigrateFile $lkImportFile) {
-                    return DropDown::make()
-                        ->icon('options-vertical')
-                        ->list([
-//                            Link::make(__('Show modems not found'))
-//                                ->route('platform.import.modems_notfound', $lkImportFile->id)
-//                                ->icon('eye'),
-
-                            Button::make('Execute')
-                                ->method('runMigrate', ['id' => $lkImportFile->id])
-                                ->icon('cloud-upload')
-                                ->rawClick()
-                                ->novalidate(),
-                        ]);
+                    return Button::make('Execute')
+                                 ->method('runMigrate', ['id' => $lkImportFile->id])
+                                 ->icon('cloud-upload')
+                                 ->rawClick()
+                                 ->novalidate();
                 }),
         ];
     }
