@@ -32,7 +32,7 @@ class ExportTreeCommand extends Command
     public function handle()
     {
         $tree = Tree::query()
-                    ->find($this->argument('id'));
+                    ->findOrFail($this->argument('id'));
 
         $file_path = sprintf(
             'app/public/export/%s_export_to_%s.json',
