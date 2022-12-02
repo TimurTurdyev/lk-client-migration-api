@@ -31,7 +31,7 @@ class PlatformProvider extends OrchidServiceProvider
     {
         return [
             Menu::make('Экспорт')
-                ->icon('monitor')
+                ->icon('orc.monitor')
                 ->route('platform.export')
                 ->title('Navigation')
                 ->badge(function () {
@@ -39,7 +39,7 @@ class PlatformProvider extends OrchidServiceProvider
                 }),
 
             Menu::make('Импорт')
-                ->icon('monitor')
+                ->icon('orc.monitor')
                 ->route('platform.import')
                 ->badge(function () {
                     return MigrateFile::count();
@@ -47,7 +47,7 @@ class PlatformProvider extends OrchidServiceProvider
 
             /*
             Menu::make('Example screen')
-                ->icon('monitor')
+                ->icon('orc.monitor')
                 ->route('platform.example')
                 ->title('Navigation')
                 ->badge(function () {
@@ -55,46 +55,46 @@ class PlatformProvider extends OrchidServiceProvider
                 }),
 
             Menu::make('Dropdown menu')
-                ->icon('code')
+                ->icon('orc.code')
                 ->list([
-                    Menu::make('Sub element item 1')->icon('bag'),
-                    Menu::make('Sub element item 2')->icon('heart'),
+                    Menu::make('Sub element item 1')->icon('orc.bag'),
+                    Menu::make('Sub element item 2')->icon('orc.heart'),
                 ]),
 
             Menu::make('Basic Elements')
                 ->title('Form controls')
-                ->icon('note')
+                ->icon('orc.note')
                 ->route('platform.example.fields'),
 
             Menu::make('Advanced Elements')
-                ->icon('briefcase')
+                ->icon('orc.briefcase')
                 ->route('platform.example.advanced'),
 
             Menu::make('Text Editors')
-                ->icon('list')
+                ->icon('orc.list')
                 ->route('platform.example.editors'),
 
             Menu::make('Overview layouts')
                 ->title('Layouts')
-                ->icon('layers')
+                ->icon('orc.layers')
                 ->route('platform.example.layouts'),
 
             Menu::make('Chart tools')
-                ->icon('bar-chart')
+                ->icon('orc.bar-chart')
                 ->route('platform.example.charts'),
 
             Menu::make('Cards')
-                ->icon('grid')
+                ->icon('orc.grid')
                 ->route('platform.example.cards')
                 ->divider(),
 
             Menu::make('Documentation')
                 ->title('Docs')
-                ->icon('docs')
+                ->icon('orc.docs')
                 ->url('https://orchid.software/en/docs'),
 
             Menu::make('Changelog')
-                ->icon('shuffle')
+                ->icon('orc.shuffle')
                 ->url('https://github.com/orchidsoftware/platform/blob/master/CHANGELOG.md')
                 ->target('_blank')
                 ->badge(function () {
@@ -102,13 +102,13 @@ class PlatformProvider extends OrchidServiceProvider
                 }, Color::DARK()),*/
 
             Menu::make(__('Users'))
-                ->icon('user')
+                ->icon('orc.user')
                 ->route('platform.systems.users')
                 ->permission('platform.systems.users')
                 ->title(__('Access rights')),
 
             Menu::make(__('Roles'))
-                ->icon('lock')
+                ->icon('orc.lock')
                 ->route('platform.systems.roles')
                 ->permission('platform.systems.roles'),
         ];
@@ -122,7 +122,7 @@ class PlatformProvider extends OrchidServiceProvider
         return [
             Menu::make('Profile')
                 ->route('platform.profile')
-                ->icon('user'),
+                ->icon('orc.user'),
         ];
     }
 

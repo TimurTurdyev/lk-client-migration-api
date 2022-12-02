@@ -40,7 +40,7 @@ class ImportFormScreen extends Screen
     {
         return [
             Button::make(__('Save'))
-                ->icon('check')
+                ->icon('orc.check')
                 ->method('save'),
         ];
     }

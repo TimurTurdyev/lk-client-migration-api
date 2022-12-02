@@ -60,15 +60,15 @@ class UserListLayout extends Table
                 ->width('100px')
                 ->render(function (User $user) {
                     return DropDown::make()
-                        ->icon('options-vertical')
+                        ->icon('orc.options-vertical')
                         ->list([
 
                             Link::make(__('Edit'))
                                 ->route('platform.systems.users.edit', $user->id)
-                                ->icon('pencil'),
+                                ->icon('orc.pencil'),
 
                             Button::make(__('Delete'))
-                                ->icon('trash')
+                                ->icon('orc.trash')
                                 ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
                                 ->method('remove', [
                                     'id' => $user->id,

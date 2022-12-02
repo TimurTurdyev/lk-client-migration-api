@@ -100,34 +100,34 @@ class ExampleScreen extends Screen
             Button::make('Show toast')
                 ->method('showToast')
                 ->novalidate()
-                ->icon('bag'),
+                ->icon('orc.bag'),
 
             ModalToggle::make('Launch demo modal')
                 ->modal('exampleModal')
                 ->method('showToast')
-                ->icon('full-screen'),
+                ->icon('orc.full-screen'),
 
             Button::make('Export file')
                 ->method('export')
-                ->icon('cloud-download')
+                ->icon('orc.cloud-download')
                 ->rawClick()
                 ->novalidate(),
 
             DropDown::make('Dropdown button')
-                ->icon('folder-alt')
+                ->icon('orc.folder-alt')
                 ->list([
 
                     Button::make('Action')
                         ->method('showToast')
-                        ->icon('bag'),
+                        ->icon('orc.bag'),
 
                     Button::make('Another action')
                         ->method('showToast')
-                        ->icon('bubbles'),
+                        ->icon('orc.bubbles'),
 
                     Button::make('Something else here')
                         ->method('showToast')
-                        ->icon('bulb'),
+                        ->icon('orc.bulb'),
                 ]),
 
         ];

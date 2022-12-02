@@ -70,7 +70,7 @@ class ImportFileListLayout extends Table
                 ->render(function (MigrateFile $lkImportFile) {
                     return Button::make('Execute')
                                  ->method('runMigrate', ['id' => $lkImportFile->id])
-                                 ->icon('cloud-upload')
+                                 ->icon('orc.cloud-upload')
                                  ->rawClick()
                                  ->novalidate();
                 }),

@@ -46,7 +46,7 @@ class ImportListScreen extends Screen
     {
         return [
             Link::make(__('Add'))
-                ->icon('plus')
+                ->icon('orc.plus')
                 ->route('platform.import.create'),
         ];
     }

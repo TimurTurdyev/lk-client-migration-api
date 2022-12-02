@@ -48,7 +48,7 @@ return [
     */
 
     'middleware' => [
-        'public'  => ['web'],
+        'public' => ['web'],
         'private' => ['web', 'platform'],
     ],
 
@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'auth'  => true,
+    'auth' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -110,8 +110,7 @@ return [
 
     'resource' => [
         'stylesheets' => [],
-        'scripts'     => [
-            //'https://code.jquery.com/jquery-3.6.0.min.js'
+        'scripts' => [//'https://code.jquery.com/jquery-3.6.0.min.js'
         ],
     ],
 
@@ -144,7 +143,7 @@ return [
     */
 
     'attachment' => [
-        'disk'      => 'public',
+        'disk' => 'public',
         'generator' => \Orchid\Attachment\Engines\Generator::class,
     ],
 
@@ -158,7 +157,10 @@ return [
     | Example: [ 'fa' => storage_path('app/fontawesome') ]
     */
 
-    'icons' => [],
+    'icons' => [
+        'orc' => \Orchid\IconPack\Path::getFolder(),
+    ],
+
 
     /*
     |--------------------------------------------------------------------------
@@ -175,7 +177,7 @@ return [
     */
 
     'notifications' => [
-        'enabled'  => true,
+        'enabled' => true,
         'interval' => 60,
     ],
 
@@ -189,8 +191,7 @@ return [
     |
     */
 
-    'search' => [
-        // \App\Models\User::class
+    'search' => [// \App\Models\User::class
     ],
 
     /*

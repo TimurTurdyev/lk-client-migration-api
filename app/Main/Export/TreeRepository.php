@@ -2,8 +2,9 @@
 
 namespace App\Main\Export;
 
-use Illuminate\Support\Collection;
+use App\Models\Tree;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class TreeRepository
 {
@@ -14,23 +15,40 @@ class TreeRepository
         DB::setDefaultConnection('mysql_lk');
     }
 
-    public function searchPathToDepth($tree): array
+    public function query(Tree $tree)
     {
-        $list_search = [];
+        $this->sql_count += 1;
+        return DB::query()
+                 ->distinct()
+                 ->from('tree')
+                 ->where('id', $tree->id)
+                 ->orWhere('path', 'like', str_replace('..', '.', sprintf('%s.%d%%', $tree->path, $tree->id)));
+    }
 
+    public function searchPathToDepth($tree, JsonCollectionStreamWriter $writer, ProgressBar $bar = null)
+    {
+        $writer->resetKey();
         foreach ($tree as $list) {
-            $list_search[] = [
-                'tree' => $list,
-                'tree_data' => $this->treeData($list->id),
-                'data' => $this->searchPathToDepth(
-                    $this->findToPath(
-                        str_replace('..', '.', sprintf('%s.%s', $list->path, $list->id))
-                    )
-                )
-            ];
-        }
+            $bar->advance();
 
-        return $list_search;
+            $list = (array)$list;
+            $data_str = sprintf(
+                '{ "tree": %s, "tree_data": %s, "data": [',
+                json_encode($list, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+                json_encode($this->treeData($list['id']), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE),
+            );
+
+            $writer->push($data_str);
+
+            $this->searchPathToDepth(
+                $this->findToPath(
+                    str_replace('..', '.', sprintf('%s.%s', $list['path'], $list['id']))
+                ),
+                $writer,
+                $bar
+            );
+            $writer->push(']}', '');
+        }
     }
 
     public function findToPath(string $path): array

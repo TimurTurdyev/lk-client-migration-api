@@ -78,19 +78,19 @@ class UserEditScreen extends Screen
     {
         return [
             Button::make(__('Impersonate user'))
-                ->icon('login')
+                ->icon('orc.login')
                 ->confirm('You can revert to your original state by logging out.')
                 ->method('loginAs')
                 ->canSee($this->user->exists && \request()->user()->id !== $this->user->id),
 
             Button::make(__('Remove'))
-                ->icon('trash')
+                ->icon('orc.trash')
                 ->confirm(__('Once the account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.'))
                 ->method('remove')
                 ->canSee($this->user->exists),
 
             Button::make(__('Save'))
-                ->icon('check')
+                ->icon('orc.check')
                 ->method('save'),
         ];
     }
@@ -108,7 +108,7 @@ class UserEditScreen extends Screen
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->canSee($this->user->exists)
                         ->method('save')
                 ),
@@ -119,7 +119,7 @@ class UserEditScreen extends Screen
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->canSee($this->user->exists)
                         ->method('save')
                 ),
@@ -130,7 +130,7 @@ class UserEditScreen extends Screen
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->canSee($this->user->exists)
                         ->method('save')
                 ),
@@ -141,7 +141,7 @@ class UserEditScreen extends Screen
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->canSee($this->user->exists)
                         ->method('save')
                 ),

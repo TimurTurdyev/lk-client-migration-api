@@ -151,20 +151,20 @@ class ExampleCardsScreen extends Screen
                     new Card('cardPersona', [
                         Button::make('Example Button')
                             ->method('showToast')
-                            ->icon('bag'),
+                            ->icon('orc.bag'),
 
                         Button::make('Example Button')
                             ->method('showToast')
-                            ->icon('bag'),
+                            ->icon('orc.bag'),
                     ]),
                 ],
                 new Card('card', [
                     Button::make('Example Button')
                         ->method('showToast')
-                        ->icon('bag'),
+                        ->icon('orc.bag'),
                     Button::make('Example Button')
                         ->method('showToast')
-                        ->icon('bag'),
+                        ->icon('orc.bag'),
                 ]),
             ]),
 

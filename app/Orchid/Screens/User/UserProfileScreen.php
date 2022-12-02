@@ -69,7 +69,7 @@ class UserProfileScreen extends Screen
                 ->commands(
                     Button::make(__('Save'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->method('save')
                 ),
 
@@ -79,7 +79,7 @@ class UserProfileScreen extends Screen
                 ->commands(
                     Button::make(__('Update password'))
                         ->type(Color::DEFAULT())
-                        ->icon('check')
+                        ->icon('orc.check')
                         ->method('changePassword')
                 ),
         ];

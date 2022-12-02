@@ -52,7 +52,7 @@ class RoleListScreen extends Screen
     {
         return [
             Link::make(__('Add'))
-                ->icon('plus')
+                ->icon('orc.plus')
                 ->href(route('platform.systems.roles.create')),
         ];
     }
