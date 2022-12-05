@@ -22,7 +22,7 @@ class ExportTreeCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Export веток с модемами и девайсами в файл json';
 
     /**
      * Execute the console command.

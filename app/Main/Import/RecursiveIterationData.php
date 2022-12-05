@@ -24,10 +24,31 @@ class RecursiveIterationData
 
         if (!empty($data['data'])) {
             $this->apply($data['data'], $path);
-        };
+        }
 
         if (isset($data['data_to_tree'])) {
             $this->repository->data_to_tree($data['data_to_tree']);
         }
+    }
+
+    public function applyTree($data, $path = '.')
+    {
+        if (!isset($data['tree'])) {
+            foreach ($data as $values) {
+                $this->apply($values, $path);
+            }
+            return;
+        }
+
+        $path = $this->repository->tree($data['tree'], $data['tree_data'], $path) ?: $path;
+
+        if (!empty($data['data'])) {
+            $this->apply($data['data'], $path);
+        }
+    }
+
+    public function applyDataToTree($data)
+    {
+        $this->repository->data_to_tree($data);
     }
 }
